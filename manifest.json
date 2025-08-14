@@ -1,0 +1,9 @@
+{
+    "id": "UD_Vendor_Actions",
+    "title": "{{C|Vendor}} {{G|Action}} Events",
+    "description": "Adds a small family of events similar to those for InventoryActions but centered around vendors.",
+    "version": "0.0.1",
+    "author": "{{K-g-G-Y-G-g-K alternation|UnderDoug}}",
+    "tags": "Trading,Extension,Library",
+    "PreviewImage": "preview.png"
+}

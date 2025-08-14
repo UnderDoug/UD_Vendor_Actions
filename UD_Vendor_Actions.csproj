@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<AssemblyName>UD_Tinkering_Bytes</AssemblyName>
+		<PackageId>UD_Tinkering_Bytes</PackageId>
+		<Authors>UnderDoug</Authors>
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+		<Company />
+	</PropertyGroup>
+	<ItemGroup>
+	  <Reference Include="UD_Blink_Mutation.dll">
+	    <HintPath>..\..\..\ModAssemblies\UD_Blink_Mutation.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+  <Import Project="../Mods.csproj" />
+</Project>
