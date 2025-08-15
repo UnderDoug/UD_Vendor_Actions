@@ -10,12 +10,12 @@ namespace XRL.World.Parts
     [Serializable]
     public class UD_VendorActionHandler : IScribedPart, IVendorActionEventHandler
     {
-        public const string COMMAND_LOOK = "VendorCommand_Look";
-        public const string COMMAND_ADD_TO_TRADE = "VendorCommand_AddToTrade";
-        public const string COMMAND_IDENTIFY = "VendorCommand_Identify";
-        public const string COMMAND_REPAIR = "VendorCommand_Repair";
-        public const string COMMAND_RECHARGE = "VendorCommand_Recharge";
-        public const string COMMAND_READ = "VendorCommand_Read";
+        public const string COMMAND_LOOK = "CmdVendorLook";
+        public const string COMMAND_ADD_TO_TRADE = "CmdTradeAdd";
+        public const string COMMAND_IDENTIFY = "CmdVendorExamine";
+        public const string COMMAND_REPAIR = "CmdVendorRepair";
+        public const string COMMAND_RECHARGE = "CmdVendorRecharge";
+        public const string COMMAND_READ = "CmdVendorRead";
 
         public UD_VendorActionHandler()
         {
