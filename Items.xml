@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  
+  <!-- Base object for appearing in a trade window but being strictly unsellable -->
+  <object Name="UD_TradeUI_DisplayItem" Inherits="Item">
+    <part Name="Render" DisplayName="[Display-Only Item]" RenderString="." RenderLayer="5" />
+    <part Name="Physics" Weight="0" />
+    <tag Name="TradeUI_DisplayOnly"/>
+    <tag Name="BaseItem" Value="*noinherit"/>
+    <tag Name="ExcludeFromDynamicEncounters" />
+    <removetag Name="DynamicObjectsTable:Items" />
+  </object>
+  
+</objects>

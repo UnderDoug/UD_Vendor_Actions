@@ -26,8 +26,10 @@ namespace UD_Vendor_Actions.Harmony
         {
             if (__instance.context.IsActive() && !TradeLine.dragging)
             {
-                if (eventData.button == PointerEventData.InputButton.Right)
+                if (eventData.button == PointerEventData.InputButton.Right 
+                    || (eventData.button == PointerEventData.InputButton.Left && ItemIsTradeUIDisplayOnly(__instance.context.data.go)))
                 {
+                    eventData.button = PointerEventData.InputButton.Right;
                     MouseClick = true;
                 }
                 else
@@ -84,5 +86,7 @@ namespace UD_Vendor_Actions.Harmony
                 }
             }
         }
+
+        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);
     }
 }

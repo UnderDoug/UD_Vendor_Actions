@@ -35,7 +35,7 @@ namespace XRL.World.Parts
                 Tinkering_Repair vendorRepairSkill = E.Vendor.GetPart<Tinkering_Repair>();
                 int priority = 10;
                 E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: priority--);
-                if (E.IncludeModernTradeOptions)
+                if (E.IncludeModernTradeOptions && !VendorAction.ItemIsTradeUIDisplayOnly(E.Item))
                 {
                     E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, WantsAsync: true);
                 }

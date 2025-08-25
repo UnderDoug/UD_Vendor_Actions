@@ -282,5 +282,14 @@ namespace UD_Vendor_Actions
             }
             return -a.Display.CompareTo(b.Display);
         }
+
+        public static bool ItemIsTradeUIDisplayOnly(GameObject Item)
+        {
+            return Item.GetBlueprint().InheritsFrom("UD_TradeUI_DisplayItem")
+                || Item.GetStringProperty("TradeUI_DisplayOnly", "No").EqualsNoCase("Yes")
+                || Item.GetIntProperty("TradeUI_DisplayOnly", 0) > 0
+                || (!Item.HasStringProperty("TradeUI_DisplayOnly") && !Item.HasIntProperty("TradeUI_DisplayOnly")
+                    && Item.HasTag("TradeUI_DisplayOnly"));
+        }
     }
 }
