@@ -75,7 +75,7 @@ namespace UD_Vendor_Actions.Harmony
                 $"{nameof(Price)}: {Price})");
             if (Price == -1)
             {
-                __result = "N/A";
+                __result = " {{K|\u2500}} ";
                 UnityEngine.Debug.LogError($"    {nameof(__result)}: {__result}");
                 return false;
             }
