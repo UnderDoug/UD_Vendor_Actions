@@ -26,7 +26,7 @@ namespace UD_Vendor_Actions.Harmony
             argumentTypes: new Type[] { typeof(FrameworkDataElement) },
             argumentVariations: new ArgumentType[] { ArgumentType.Normal })]
         [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> setData_BlockDisplayOnly_Prefix(IEnumerable<CodeInstruction> instructions)
+        public static IEnumerable<CodeInstruction> setData_UseFormatPrice_Transpile(IEnumerable<CodeInstruction> instructions)
         {
             string patchMethodName = $"{nameof(TradeLine_Patches)}.{nameof(TradeLine.setData)}";
             string opCode = "";
@@ -109,6 +109,23 @@ namespace UD_Vendor_Actions.Harmony
                 MetricsManager.LogModError(ModManager.GetMod(), $"Failed to transpile {patchMethodName}");
             }
             return codes.AsEnumerable();
+        }
+        [HarmonyPatch(
+            declaringType: typeof(TradeLine),
+            methodName: nameof(TradeLine.setData),
+            argumentTypes: new Type[] { typeof(FrameworkDataElement) },
+            argumentVariations: new ArgumentType[] { ArgumentType.Normal })]
+        [HarmonyPostfix]
+        public static void setData_ExcludeCurrencySymbolIfDisplayOnly_Postfix(ref TradeLine __instance, ref FrameworkDataElement data)
+        {
+            if (data is TradeLineData tradeLineData && tradeLineData.type != TradeLineDataType.Category)
+            {
+                double price = TradeUI.GetValue(tradeLineData?.go, tradeLineData?.traderInventory);
+                if (price < 0 || ItemIsTradeUIDisplayOnly(tradeLineData.go))
+                {
+                    __instance?.rightFloatText?.SetText(TradeUI.FormatPrice(price, TradeUI.costMultiple));
+                }
+            }
         }
 
         [HarmonyPatch(

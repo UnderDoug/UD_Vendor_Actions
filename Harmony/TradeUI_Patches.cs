@@ -68,15 +68,17 @@ namespace UD_Vendor_Actions.Harmony
         [HarmonyPrefix]
         public static bool FindInTradeList_BlockDisplayOnly_Prefix(ref string __result, ref double Price)
         {
+            /*
             UnityEngine.Debug.LogError(
                 $"{nameof(TradeUI_Patches)}." +
                 $"{nameof(TradeUI.FormatPrice)}(" +
                 $"{nameof(__result)}: {__result}, " +
                 $"{nameof(Price)}: {Price})");
+            */
             if (Price == -1)
             {
-                __result = " {{K|\u2500}} ";
-                UnityEngine.Debug.LogError($"    {nameof(__result)}: {__result}");
+                __result = ""; // "{{K|\u2500 N/A \u2500}}";
+                // UnityEngine.Debug.LogError($"    {nameof(__result)}: {__result}");
                 return false;
             }
             return true;
@@ -94,6 +96,17 @@ namespace UD_Vendor_Actions.Harmony
             {
                 __result = -1;
             }
+        }
+
+        [HarmonyPatch(
+            declaringType: typeof(TradeUI),
+            methodName: nameof(TradeUI.ShowTradeScreen),
+            argumentTypes: new Type[] { typeof(GameObject), typeof(float), typeof(TradeUI.TradeScreenMode) },
+            argumentVariations: new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal })]
+        [HarmonyPostfix]
+        public static void ShowTradeScreen_SendEvent_Postfix(ref GameObject Trader)
+        {
+            EndTradeEvent.Send(The.Player, Trader);
         }
 
         public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);
