@@ -25,6 +25,8 @@ namespace UD_Vendor_Actions
             }
         }
 
+        private bool FirstProcessed = false;
+
         public string Name;
 
         public char Key;
@@ -49,34 +51,55 @@ namespace UD_Vendor_Actions
 
         public GameObject FireOn;
 
-        public bool WantsAsync;
+        public bool ProcessAfterAwait;
 
         public bool ClearAndSetUpTradeUI;
 
-        public bool Process(TradeLine TradeLine, GameObject Vendor, GameObject Item, GameObject Owner)
+        public bool Staggered;
+
+        public bool CloseTradeBeforeProcessingSecond;
+
+        public bool CloseTradeAfterProcessing;
+
+        public bool Process(TradeLine TradeLine, GameObject Vendor, GameObject Item, GameObject Owner, out bool CloseTrade)
         {
-            Event @event = Event.New("VendorCommandActivating", nameof(Vendor), Vendor, nameof(Item), Item, nameof(Owner), Owner);
-            Owner.FireEvent(@event);
             bool handled = false;
-            if (!handled && GameObject.Validate(ref FireOn))
+            CloseTrade = false;
+            bool cancelSecond = false;
+            if (Staggered || !FirstProcessed)
             {
-                FireOn.FireEvent(@event);
-                handled = VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, DramsCost) || handled;
-            }
-            if (!handled && FireOnVendor)
-            {
-                Vendor.FireEvent(@event);
-                handled = VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, DramsCost) || handled;
-            }
-            if (!handled && FireOnItem)
-            {
-                Item.FireEvent(@event);
-                handled = VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, DramsCost) || handled;
-            }
-            if (!handled && FireOnPlayer)
-            {
-                The.Player.FireEvent(@event);
-                handled = VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, DramsCost) || handled;
+                Event @event = Event.New("VendorCommandActivating", nameof(Vendor), Vendor, nameof(Item), Item, nameof(Owner), Owner);
+                Owner.FireEvent(@event);
+                if (!handled && GameObject.Validate(ref FireOn))
+                {
+                    FireOn.FireEvent(@event);
+                    handled = VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                }
+                if (!handled && FireOnVendor)
+                {
+                    Vendor.FireEvent(@event);
+                    handled = VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                }
+                if (!handled && FireOnItem)
+                {
+                    Item.FireEvent(@event);
+                    handled = VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                }
+                if (!handled && FireOnPlayer)
+                {
+                    The.Player.FireEvent(@event);
+                    handled = VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                }
+                if (cancelSecond)
+                {
+                    Staggered = false;
+                }
+                if ((Staggered && !FirstProcessed && CloseTradeBeforeProcessingSecond)
+                    || ((!Staggered || FirstProcessed) && CloseTradeAfterProcessing))
+                {
+                    CloseTrade = true;
+                }
+                FirstProcessed = true;
             }
             return handled;
         }

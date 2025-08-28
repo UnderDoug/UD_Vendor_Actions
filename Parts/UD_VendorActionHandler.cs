@@ -37,7 +37,7 @@ namespace XRL.World.Parts
                 E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: priority--);
                 if (E.IncludeModernTradeOptions && !VendorAction.ItemIsTradeUIDisplayOnly(E.Item))
                 {
-                    E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, WantsAsync: true);
+                    E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, ProcessAfterAwait: true);
                 }
                 if (vendorIdentifyLevel > 0 
                     && !E.Item.Understood())
