@@ -67,7 +67,7 @@ namespace UD_Vendor_Actions
                 }
             }
         }
-        public bool AddAction(string Name, string Display = null, string Command = null, string PreferToHighlight = null, char Key = ' ', int Default = 0, int Priority = 0, int? DramsCost = null, bool FireOnVendor = true, bool FireOnItem = false, bool FireOnPlayer = false, GameObject FireOn = null, bool Override = false, bool WantsAsync = false, bool ClearAndSetUpTradeUI = false)
+        public bool AddAction(string Name, string Display = null, string Command = null, string PreferToHighlight = null, char Key = ' ', int Default = 0, int Priority = 0, int? DramsCost = null, bool FireOnVendor = true, bool FireOnItem = false, bool FireOnPlayer = false, GameObject FireOn = null, bool Override = false, bool ProcessAfterAwait = false, bool ClearAndSetUpTradeUI = false, bool Staggered = false, bool CloseTradeBeforeProcessingSecond = false, bool CloseTradeAfterProcessing = false)
         {
             Actions ??= new();
 
@@ -89,9 +89,12 @@ namespace UD_Vendor_Actions
                 FireOnItem = FireOnItem,
                 FireOnPlayer = FireOnPlayer,
                 FireOn = FireOn,
-                WantsAsync = WantsAsync,
+                ProcessAfterAwait = ProcessAfterAwait,
                 ClearAndSetUpTradeUI = ClearAndSetUpTradeUI,
+                Staggered = Staggered,
             };
+            vendorAction.CloseTradeBeforeProcessingSecond = vendorAction.Staggered && CloseTradeBeforeProcessingSecond;
+            vendorAction.CloseTradeAfterProcessing = !vendorAction.CloseTradeBeforeProcessingSecond && CloseTradeAfterProcessing;
             Actions[Name] = vendorAction;
             return true;
         }

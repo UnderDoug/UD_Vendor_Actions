@@ -20,6 +20,10 @@ namespace UD_Vendor_Actions.Harmony
 
         public static bool Success = false;
 
+        public static bool CloseTrade = false;
+
+        public static VendorAction VendorAction = null;
+
         [HarmonyPatch(
             declaringType: typeof(TradeLine),
             methodName: nameof(TradeLine.setData),
@@ -158,8 +162,28 @@ namespace UD_Vendor_Actions.Harmony
         [HarmonyPrefix]
         public static bool HandleVendorActions_EventInstead_Prefix(ref TradeLine __instance)
         {
+            Success = false;
+            CloseTrade = false;
             HandleVendorActions(TradeScreen.Trader, __instance);
 
+            /*
+            GameObject item = __instance.context.data.go;
+
+            if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
+            {
+                Success = VendorAction.Process(__instance, TradeScreen.Trader, item, __instance.context.data.traderInventory ? TradeScreen.Trader : The.Player, out CloseTrade);
+            }
+            if (CloseTrade)
+            {
+                __instance.screen.Cancel();
+                ConversationUI.Escape();
+                CloseTrade = false;
+            }
+            if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
+            {
+                Success = VendorAction.Process(__instance, TradeScreen.Trader, item, __instance.context.data.traderInventory ? TradeScreen.Trader : The.Player, out _);
+            }
+            */
             MouseClick = false;
             bool success = Success;
             if (success)
@@ -167,6 +191,7 @@ namespace UD_Vendor_Actions.Harmony
                 // potentially do something here?
             }
             Success = false;
+            CloseTrade = false;
             return false; // skip the patched method. 
         }
 
@@ -178,23 +203,56 @@ namespace UD_Vendor_Actions.Harmony
                 Dictionary<string, VendorAction> actions = new();
                 GetVendorActionsEvent.Send(TradeLine, Vendor, item, actions, true);
                 
-                VendorAction action = null;
                 await APIDispatch.RunAndWaitAsync(delegate
                 {
-                    action = VendorAction.ShowVendorActionMenu(ActionTable: actions, Item: item, Intro: "Choose an action", MouseClick: MouseClick);
-                    if (action != null && !action.WantsAsync)
+                    VendorAction = VendorAction.ShowVendorActionMenu(ActionTable: actions, Item: item, Intro: "Choose an action", MouseClick: MouseClick);
+                    if (VendorAction != null && !VendorAction.ProcessAfterAwait)
                     {
-                        Success = action.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player);
+                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+
+                        if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
+                        {
+                            Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                        }
+                        if (CloseTrade)
+                        {
+                            TradeLine.screen.Cancel();
+                            ConversationUI.Escape();
+                            CloseTrade = false;
+                        }
+                        if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
+                        {
+                            Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                        }
                     }
                 });
-                if (action != null && action.ClearAndSetUpTradeUI)
+
+                if (VendorAction != null && VendorAction.ClearAndSetUpTradeUI && !CloseTrade)
                 {
                     TradeLine.screen.ClearAndSetupTradeUI();
                 }
-                TradeLine.screen.UpdateViewFromData();
-                if (action != null && action.WantsAsync)
+
+                if (!CloseTrade)
                 {
-                    Success = action.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player);
+                    TradeLine.screen.UpdateViewFromData();
+                }
+                if (!CloseTrade && VendorAction != null && VendorAction.ProcessAfterAwait)
+                {
+                    Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+
+                    if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
+                    {
+                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                    }
+                    if (CloseTrade)
+                    {
+                        TradeLine.screen.Cancel();
+                        ConversationUI.Escape();
+                    }
+                    if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
+                    {
+                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                    }
                 }
             }
         }
