@@ -67,7 +67,7 @@ namespace UD_Vendor_Actions
                 }
             }
         }
-        public bool AddAction(string Name, string Display = null, string Command = null, string PreferToHighlight = null, char Key = ' ', int Default = 0, int Priority = 0, int? DramsCost = null, bool FireOnVendor = true, bool FireOnItem = false, bool FireOnPlayer = false, GameObject FireOn = null, bool Override = false, bool ProcessAfterAwait = false, bool ClearAndSetUpTradeUI = false, bool Staggered = false, bool CloseTradeBeforeProcessingSecond = false, bool CloseTradeAfterProcessing = false)
+        public bool AddAction(string Name, string Display = null, string Command = null, string PreferToHighlight = null, char Key = ' ', int Default = 0, int Priority = 0, int? DramsCost = null, bool FireOnVendor = true, bool FireOnItem = false, bool FireOnPlayer = false, GameObject FireOn = null, bool Override = false, bool ProcessAfterAwait = false, bool ProcessSecondAfterAwait = false, bool ClearAndSetUpTradeUI = false, bool Staggered = false, bool CloseTradeBeforeProcessingSecond = false, bool CloseTradeAfterProcessing = false)
         {
             Actions ??= new();
 
@@ -90,6 +90,7 @@ namespace UD_Vendor_Actions
                 FireOnPlayer = FireOnPlayer,
                 FireOn = FireOn,
                 ProcessAfterAwait = ProcessAfterAwait,
+                ProcessSecondAfterAwait = ProcessAfterAwait || ProcessSecondAfterAwait,
                 ClearAndSetUpTradeUI = ClearAndSetUpTradeUI,
                 Staggered = Staggered,
             };

@@ -1,15 +1,23 @@
 ﻿using HarmonyLib;
-using Qud.UI;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine.EventSystems;
+
+using Qud.UI;
+
 using XRL;
 using XRL.UI;
 using XRL.UI.Framework;
 using XRL.World;
+
+using UD_Modding_Toolbox;
+using static UD_Modding_Toolbox.Options;
+using static UD_Modding_Toolbox.Const;
+using static UD_Modding_Toolbox.Utils;
 
 namespace UD_Vendor_Actions.Harmony
 {
@@ -164,6 +172,7 @@ namespace UD_Vendor_Actions.Harmony
         {
             Success = false;
             CloseTrade = false;
+            VendorAction = null;
             HandleVendorActions(TradeScreen.Trader, __instance);
 
             /*
@@ -192,69 +201,150 @@ namespace UD_Vendor_Actions.Harmony
             }
             Success = false;
             CloseTrade = false;
+            VendorAction = null;
             return false; // skip the patched method. 
         }
 
         public static async void HandleVendorActions(GameObject Vendor, TradeLine TradeLine)
         {
+            int indent = Debug.LastIndent;
+            bool doDebug = true;
+            string methodName = 
+                $"{nameof(TradeLine_Patches)}." +
+                $"{nameof(HandleVendorActions)}";
+            string methodArgs = "(" +
+                $"{nameof(Vendor)}: {Vendor?.DebugName}, " +
+                $"{nameof(TradeLine)})";
+
             GameObject item = TradeLine.context.data.go;
+            bool traderInventory = TradeLine.context.data.traderInventory;
+            GameObject owner = traderInventory ? Vendor : The.Player;
+
+            bool processAfterAwait = false;
+            bool processSecondAfterAwait = false;
+            bool clearAndSetUpTradeUI = false;
+            bool staggered = false;
+            bool closeTradeBeforeProcessingSecond = false;
+
+            bool tradeClosed = false;
+
             if (item != null)
             {
+                Debug.Entry(4, $"{methodName}{methodArgs} for {nameof(item)}: {item?.DebugName}",
+                    Indent: indent + 1, Toggle: doDebug);
                 Dictionary<string, VendorAction> actions = new();
+
+                Debug.Entry(4, $"Sending {nameof(GetVendorActionsEvent)}", Indent: indent + 2, Toggle: doDebug);
                 GetVendorActionsEvent.Send(TradeLine, Vendor, item, actions, true);
-                
+
+                Debug.Entry(4, $"awaiting {nameof(APIDispatch)}.{nameof(APIDispatch.RunAndWaitAsync)}",
+                    Indent: indent + 2, Toggle: doDebug);
                 await APIDispatch.RunAndWaitAsync(delegate
                 {
-                    VendorAction = VendorAction.ShowVendorActionMenu(ActionTable: actions, Item: item, Intro: "Choose an action", MouseClick: MouseClick);
-                    if (VendorAction != null && !VendorAction.ProcessAfterAwait)
-                    {
-                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                    Debug.Entry(4, $"{nameof(VendorAction.ShowVendorActionMenu)}",
+                        Indent: indent + 2, Toggle: doDebug);
+                    VendorAction = VendorAction.ShowVendorActionMenu(
+                        ActionTable: actions,
+                        Item: item,
+                        Intro: "Choose an action",
+                        MouseClick: MouseClick);
 
-                        if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
+                    if (VendorAction != null)
+                    {
+                        processAfterAwait = VendorAction.ProcessAfterAwait;
+                        Debug.LoopItem(4, $"{nameof(processAfterAwait)}", $"{processAfterAwait}", 
+                            Good: processAfterAwait, Indent: indent + 3, Toggle: doDebug);
+
+                        processSecondAfterAwait = VendorAction.ProcessSecondAfterAwait;
+                        Debug.LoopItem(4, $"{nameof(processSecondAfterAwait)}", $"{processAfterAwait}", 
+                            Good: processSecondAfterAwait, Indent: indent + 3, Toggle: doDebug);
+
+                        clearAndSetUpTradeUI = VendorAction.ClearAndSetUpTradeUI;
+                        Debug.LoopItem(4, $"{nameof(clearAndSetUpTradeUI)}", $"{clearAndSetUpTradeUI}", 
+                            Good: clearAndSetUpTradeUI, Indent: indent + 3, Toggle: doDebug);
+
+                        staggered = VendorAction.Staggered;
+                        Debug.LoopItem(4, $"{nameof(staggered)}", $"{staggered}", 
+                            Good: staggered, Indent: indent + 3, Toggle: doDebug);
+
+                        closeTradeBeforeProcessingSecond = VendorAction.CloseTradeBeforeProcessingSecond;
+                        Debug.LoopItem(4, $"{nameof(closeTradeBeforeProcessingSecond)}", $"{closeTradeBeforeProcessingSecond}", 
+                            Good: closeTradeBeforeProcessingSecond, Indent: indent + 3, Toggle: doDebug);
+                    }
+
+                    if (VendorAction != null && !processAfterAwait && !processSecondAfterAwait)
+                    {
+                        Debug.Entry(4, $"!{nameof(VendorAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}", 
+                            Indent: indent + 3, Toggle: doDebug);
+                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+
+                        if (VendorAction != null && staggered && !closeTradeBeforeProcessingSecond)
                         {
-                            Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                            Debug.Entry(4, $"!{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                            Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                                Indent: indent + 4, Toggle: doDebug);
+                            Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                         }
-                        if (CloseTrade)
+                        if (!tradeClosed && CloseTrade)
                         {
                             TradeLine.screen.Cancel();
                             ConversationUI.Escape();
-                            CloseTrade = false;
                         }
-                        if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
+                        Debug.LoopItem(4, $"{nameof(CloseTrade)}", $"{CloseTrade}", Good: CloseTrade, Indent: indent + 3, Toggle: doDebug);
+                        if (VendorAction != null && staggered && closeTradeBeforeProcessingSecond)
                         {
-                            Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                            Debug.Entry(4, $"{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                            Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                                Indent: indent + 4, Toggle: doDebug);
+                            Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                         }
                     }
                 });
+                Debug.Entry(4, $"finished {nameof(APIDispatch)}.{nameof(APIDispatch.RunAndWaitAsync)}",
+                    Indent: indent + 2, Toggle: doDebug);
 
-                if (VendorAction != null && VendorAction.ClearAndSetUpTradeUI && !CloseTrade)
+                if (VendorAction != null && clearAndSetUpTradeUI && !CloseTrade)
                 {
                     TradeLine.screen.ClearAndSetupTradeUI();
                 }
 
-                if (!CloseTrade)
+                if (!tradeClosed)
                 {
+                    Debug.Entry(4, $"Calling {nameof(TradeLine.screen.UpdateViewFromData)}", Indent: indent + 2, Toggle: doDebug);
                     TradeLine.screen.UpdateViewFromData();
                 }
-                if (!CloseTrade && VendorAction != null && VendorAction.ProcessAfterAwait)
+                if (VendorAction != null && (processAfterAwait || processSecondAfterAwait))
                 {
-                    Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                    Debug.Entry(4, $"{nameof(VendorAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
+                    Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                        Indent: indent + 3, Toggle: doDebug);
+                    Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
 
-                    if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
+                    if (VendorAction != null && staggered && !closeTradeBeforeProcessingSecond)
                     {
-                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                        Debug.Entry(4, $"!{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                            Indent: indent + 4, Toggle: doDebug);
+                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                     }
-                    if (CloseTrade)
+                    if (!tradeClosed && CloseTrade)
                     {
                         TradeLine.screen.Cancel();
                         ConversationUI.Escape();
                     }
-                    if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
+                    Debug.LoopItem(4, $"{nameof(CloseTrade)}", $"{CloseTrade}", Good: CloseTrade, Indent: indent + 3, Toggle: doDebug);
+                    if (VendorAction != null && staggered && closeTradeBeforeProcessingSecond)
                     {
-                        Success = VendorAction.Process(TradeLine, Vendor, item, TradeLine.context.data.traderInventory ? Vendor : The.Player, out CloseTrade);
+                        Debug.Entry(4, $"{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                            Indent: indent + 4, Toggle: doDebug);
+                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                     }
                 }
             }
+
+            Debug.LastIndent = indent;
         }
 
         public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);

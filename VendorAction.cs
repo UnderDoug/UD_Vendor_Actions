@@ -53,6 +53,8 @@ namespace UD_Vendor_Actions
 
         public bool ProcessAfterAwait;
 
+        public bool ProcessSecondAfterAwait;
+
         public bool ClearAndSetUpTradeUI;
 
         public bool Staggered;
