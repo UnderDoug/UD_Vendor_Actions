@@ -6,5 +6,10 @@
 		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
 		<Company />
 	</PropertyGroup>
+  <ItemGroup>
+    <Reference Include="UD_Modding_Toolbox.dll">
+      <HintPath>..\..\..\ModAssemblies\UD_Modding_Toolbox.dll</HintPath>
+    </Reference>
+  </ItemGroup>
   <Import Project="../Mods.csproj" />
 </Project>
