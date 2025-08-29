@@ -256,7 +256,7 @@ namespace UD_Vendor_Actions.Harmony
                             Good: processAfterAwait, Indent: indent + 3, Toggle: doDebug);
 
                         processSecondAfterAwait = VendorAction.ProcessSecondAfterAwait;
-                        Debug.LoopItem(4, $"{nameof(processSecondAfterAwait)}", $"{processAfterAwait}", 
+                        Debug.LoopItem(4, $"{nameof(processSecondAfterAwait)}", $"{processSecondAfterAwait}", 
                             Good: processSecondAfterAwait, Indent: indent + 3, Toggle: doDebug);
 
                         clearAndSetUpTradeUI = VendorAction.ClearAndSetUpTradeUI;
@@ -272,7 +272,7 @@ namespace UD_Vendor_Actions.Harmony
                             Good: closeTradeBeforeProcessingSecond, Indent: indent + 3, Toggle: doDebug);
                     }
 
-                    if (VendorAction != null && !processAfterAwait && !processSecondAfterAwait)
+                    if (VendorAction != null && !processAfterAwait)
                     {
                         Debug.Entry(4, $"!{nameof(VendorAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
                         Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}", 
