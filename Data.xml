@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  <!--
+  
+  Usage:
+  
+  <object Name="UD_PhysicsCategoryIcons" Inherits="DataBucket">
+    <tag Name="Scrap" Value="Items/bit11.bmp" />
+  </object>
+  
+  the tag's name should be the Physics.Category, and the tag's value should be the desired tile.
+  
+  -->
+
+  <object Name="UD_PhysicsCategoryIcons" Inherits="DataBucket">
+
+  </object>
+</objects>

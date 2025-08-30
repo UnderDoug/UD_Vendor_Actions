@@ -38,17 +38,11 @@ namespace UD_Vendor_Actions.Harmony
             argumentTypes: new Type[] { typeof(FrameworkDataElement) },
             argumentVariations: new ArgumentType[] { ArgumentType.Normal })]
         [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> setData_UseFormatPrice_Transpile(IEnumerable<CodeInstruction> instructions)
+        public static IEnumerable<CodeInstruction> setData_UseFormatPrice_Transpile(IEnumerable<CodeInstruction> Instructions)
         {
             string patchMethodName = $"{nameof(TradeLine_Patches)}.{nameof(TradeLine.setData)}";
-            string opCode = "";
-            string operand = "";
 
-            List<CodeInstruction> codes = new(instructions);
-            bool haveRange = false;
-            int startIndex = -1;
-            int endIndex = -1;
-            CodeInstruction newNullableBool = null;
+            // Courtesy Books (mostly)
 
             // string text2 = $"{TradeUI.GetValue(tradeLineData.go, tradeLineData.traderInventory):0.00}";
             //      Start Below
@@ -57,71 +51,62 @@ namespace UD_Vendor_Actions.Harmony
             // IL_022f: ldfld class XRL.World.GameObject Qud.UI.TradeLineData::go
             // IL_0234: ldloc.0
             // IL_0235: ldfld bool Qud.UI.TradeLineData::traderInventory
-            //      Save this instruction.
             // IL_023a: newobj instance void valuetype [mscorlib] System.Nullable`1<bool>::.ctor(!0)
             // IL_023f: call float64 XRL.UI.TradeUI::GetValue(class XRL.World.GameObject, valuetype[mscorlib] System.Nullable`1<bool>)
             // IL_0244: box[mscorlib] System.Double
             // IL_0249: call string[mscorlib] System.String::Format(string, object)
             //      End Above
             // IL_024e: stloc.3
-            for (int i = 0; i < codes.Count; i++)
+
+            CodeMatcher codeMatcher = new(Instructions);
+
+            codeMatcher.MatchStartForward(
+                new CodeMatch[1]
+                {
+                    new(Instruction => Instruction.Calls(AccessTools.Method(typeof(string), nameof(string.Format), new Type[] { typeof(string), typeof(object) }))),
+                });
+
+            if (codeMatcher.IsInvalid)
             {
-                opCode = codes[i]?.opcode.ToString();
-                operand = codes[i]?.operand?.ToString();
-
-                if (startIndex > -1
-                    && endIndex < 0
-                    && codes[i]?.opcode == OpCodes.Call
-                    && codes[i]?.operand is MethodInfo stringFormat
-                    && stringFormat == AccessTools.Method(typeof(string), nameof(string.Format), new Type[] { typeof(string), typeof(object) }))
-                {
-                    endIndex = i;
-                }
-
-                if (startIndex > -1
-                    && endIndex < 0
-                    && codes[i]?.opcode == OpCodes.Newobj)
-                {
-                    newNullableBool = codes[i];
-                }
-
-                if (startIndex < 0
-                    && endIndex < 0
-                    && codes[i]?.operand is string doubleFormatting
-                    && doubleFormatting == @"{0:0.00}")
-                {
-                    startIndex = i;
-                }
-
-                if (startIndex > -1 && endIndex > -1)
-                {
-                    haveRange = true;
-                    break;
-                }
+                MetricsManager.LogModError(ModManager.GetMod(), $"{patchMethodName}: {nameof(CodeMatcher.MatchStartForward)} failed to find instruction");
+                return Instructions;
             }
-            if (haveRange)
+
+            int endIndex = codeMatcher.Pos;
+
+            codeMatcher.MatchStartBackwards(
+                new CodeMatch[1]
+                {
+                    new(OpCodes.Ldstr, @"{0:0.00}"),
+                });
+
+            if (codeMatcher.IsInvalid)
             {
-                List<CodeInstruction> instructionsToInsert = new()
-                {
-                    new(OpCodes.Ldloc_0),
-                    new(OpCodes.Ldfld, AccessTools.Field(typeof(TradeLineData), nameof(TradeLineData.go))),
-                    new(OpCodes.Ldloc_0),
-                    new(OpCodes.Ldfld, AccessTools.Field(typeof(TradeLineData), nameof(TradeLineData.traderInventory))),
-                    newNullableBool,
-                    CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.GetValue), new Type[] { typeof(GameObject), typeof(bool?) }),
-                    new(OpCodes.Ldsfld, AccessTools.Field(typeof(TradeScreen), nameof(TradeScreen.CostMultiple))),
-                    CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.FormatPrice), new Type[] { typeof(double), typeof(float) }),
-                };
-                codes.RemoveRange(startIndex, endIndex - startIndex + 1);
-                codes.InsertRange(startIndex , instructionsToInsert);
-                MetricsManager.LogModInfo(ModManager.GetMod(), $"Successfully transpiled {patchMethodName}");
+                MetricsManager.LogModError(ModManager.GetMod(), $"{patchMethodName}: {nameof(CodeMatcher.MatchStartBackwards)} failed to find instruction");
+                return Instructions;
             }
-            else
-            {
-                MetricsManager.LogModError(ModManager.GetMod(), $"Failed to transpile {patchMethodName}");
-            }
-            return codes.AsEnumerable();
+
+            int startIndex = codeMatcher.Pos;
+
+            codeMatcher.RemoveInstructionsInRange(startIndex, endIndex)
+                .Insert(
+                    new CodeInstruction[]
+                    {
+                        new(OpCodes.Ldloc_0), // can be CodeInstruction.LoadLocal(0) in the future
+                        CodeInstruction.LoadField(typeof(TradeLineData), nameof(TradeLineData.go)),
+                        new(OpCodes.Ldloc_0),
+                        CodeInstruction.LoadField(typeof(TradeLineData), nameof(TradeLineData.traderInventory)),
+                        new(OpCodes.Newobj, AccessTools.Constructor(typeof(bool?))),
+                        CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.GetValue), new Type[] { typeof(GameObject), typeof(bool?) }),
+                        CodeInstruction.LoadField(typeof(TradeScreen), nameof(TradeScreen.CostMultiple)),
+                        CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.FormatPrice), new Type[] { typeof(double), typeof(float) }),
+                    }
+                );
+
+            MetricsManager.LogModInfo(ModManager.GetMod(), $"Successfully transpiled {patchMethodName}");
+            return codeMatcher.InstructionEnumeration();
         }
+
         [HarmonyPatch(
             declaringType: typeof(TradeLine),
             methodName: nameof(TradeLine.setData),
@@ -175,24 +160,6 @@ namespace UD_Vendor_Actions.Harmony
             VendorAction = null;
             HandleVendorActions(TradeScreen.Trader, __instance);
 
-            /*
-            GameObject item = __instance.context.data.go;
-
-            if (VendorAction != null && VendorAction.Staggered && !VendorAction.CloseTradeBeforeProcessingSecond)
-            {
-                Success = VendorAction.Process(__instance, TradeScreen.Trader, item, __instance.context.data.traderInventory ? TradeScreen.Trader : The.Player, out CloseTrade);
-            }
-            if (CloseTrade)
-            {
-                __instance.screen.Cancel();
-                ConversationUI.Escape();
-                CloseTrade = false;
-            }
-            if (VendorAction != null && VendorAction.Staggered && VendorAction.CloseTradeBeforeProcessingSecond)
-            {
-                Success = VendorAction.Process(__instance, TradeScreen.Trader, item, __instance.context.data.traderInventory ? TradeScreen.Trader : The.Player, out _);
-            }
-            */
             MouseClick = false;
             bool success = Success;
             if (success)
