@@ -75,22 +75,22 @@ namespace UD_Vendor_Actions
                 if (!handled && GameObject.Validate(ref FireOn))
                 {
                     FireOn.FireEvent(@event);
-                    handled = VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnVendor)
                 {
                     Vendor.FireEvent(@event);
-                    handled = VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnItem)
                 {
                     Item.FireEvent(@event);
-                    handled = VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnPlayer)
                 {
                     The.Player.FireEvent(@event);
-                    handled = VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (cancelSecond)
                 {

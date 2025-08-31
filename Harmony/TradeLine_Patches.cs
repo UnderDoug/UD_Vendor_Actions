@@ -74,19 +74,6 @@ namespace UD_Vendor_Actions.Harmony
             codeMatcher.MatchStartBackwards(
                 new CodeMatch[1]
                 {
-                    new(Instruction => Instruction.opcode == OpCodes.Newobj),
-                });
-
-            if (codeMatcher.IsInvalid)
-            {
-                MetricsManager.LogModError(ModManager.GetMod("UD_Vendor_Actions"), $"{patchMethodName}: {nameof(CodeMatcher.MatchStartBackwards)} failed to find instruction {OpCodes.Newobj}");
-                return Instructions;
-            }
-            CodeInstruction nullableBool = codeMatcher.Instruction.Clone();
-
-            codeMatcher.MatchStartBackwards(
-                new CodeMatch[1]
-                {
                     new(OpCodes.Ldstr, "{0:0.00}"),
                 });
 
@@ -102,11 +89,12 @@ namespace UD_Vendor_Actions.Harmony
                 .Insert(
                     new CodeInstruction[]
                     {
+                        // TradeUI.FormatPrice(TradeUI.GetValue(data.go, data.traderInverntory), TradeScreen.CostMultiple)
                         new(OpCodes.Ldloc_0), // can be CodeInstruction.LoadLocal(0) in the future
                         CodeInstruction.LoadField(typeof(TradeLineData), nameof(TradeLineData.go)),
                         new(OpCodes.Ldloc_0),
                         CodeInstruction.LoadField(typeof(TradeLineData), nameof(TradeLineData.traderInventory)),
-                        nullableBool,
+                        new(OpCodes.Newobj, AccessTools.Constructor(typeof(bool?), new Type[] { typeof(bool) })),
                         CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.GetValue), new Type[] { typeof(GameObject), typeof(bool?) }),
                         CodeInstruction.LoadField(typeof(TradeScreen), nameof(TradeScreen.CostMultiple)),
                         CodeInstruction.Call(typeof(TradeUI), nameof(TradeUI.FormatPrice), new Type[] { typeof(double), typeof(float) }),
@@ -114,12 +102,6 @@ namespace UD_Vendor_Actions.Harmony
                 );
 
             MetricsManager.LogModInfo(ModManager.GetMod("UD_Vendor_Actions"), $"Successfully transpiled {patchMethodName}");
-            int counter = 0;
-            foreach (CodeInstruction ci in codeMatcher.InstructionEnumeration())
-            {
-                if (counter++ > startIndex - 8 && counter < startIndex + 18)
-                MetricsManager.LogModInfo(ModManager.GetMod("UD_Vendor_Actions"), $"{ci.opcode} {ci.operand}");
-            }
 
             return codeMatcher.InstructionEnumeration();
         }
