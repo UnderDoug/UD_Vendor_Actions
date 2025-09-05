@@ -21,17 +21,22 @@ namespace XRL.World.Parts
         {
         }
 
+        public override void Register(GameObject Object, IEventRegistrar Registrar)
+        {
+            Registrar.Register(VendorActionEvent.ID, EventOrder.LATE);
+            base.Register(Object, Registrar);
+        }
         public override bool WantEvent(int ID, int Cascade)
         {
             return base.WantEvent(ID, Cascade)
-                || ID == GetVendorActionsEvent.ID
-                || ID == VendorActionEvent.ID;
+                || ID == GetVendorActionsEvent.ID;
         }
         public virtual bool HandleEvent(GetVendorActionsEvent E)
         {
             if (E.Vendor != null && ParentObject == E.Vendor)
             {
                 int vendorIdentifyLevel = GetIdentifyLevel(E.Vendor);
+                bool itemUnderstood = E.Item.Understood();
                 Tinkering_Repair vendorRepairSkill = E.Vendor.GetPart<Tinkering_Repair>();
                 int priority = 10;
                 E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: priority--);
@@ -39,18 +44,16 @@ namespace XRL.World.Parts
                 {
                     E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, ProcessAfterAwait: true);
                 }
-                if (vendorIdentifyLevel > 0 
-                    && !E.Item.Understood())
+                if (vendorIdentifyLevel > 0 && !itemUnderstood)
                 {
                     E.AddAction("Identify", "identify", COMMAND_IDENTIFY, Key: 'i', Priority: priority--, ClearAndSetUpTradeUI: true);
                 }
-                if (vendorRepairSkill != null 
-                    && IsRepairableEvent.Check(E.Vendor, E.Item, null, vendorRepairSkill))
+                if (vendorRepairSkill != null && IsRepairableEvent.Check(E.Vendor, E.Item, null, vendorRepairSkill))
                 {
                     E.AddAction("Repair", "repair", COMMAND_REPAIR, Key: 'r', Priority: priority--);
                 }
                 if (E.Vendor.HasSkill(nameof(Tinkering_Tinker1)) 
-                    && (E.Item.Understood() || vendorIdentifyLevel >= E.Item.GetComplexity()) && E.Item.NeedsRecharge())
+                    && (itemUnderstood || vendorIdentifyLevel >= E.Item.GetComplexity()) && E.Item.NeedsRecharge())
                 {
                     E.AddAction("Recharge", "recharge", COMMAND_RECHARGE, Key: 'c', Priority: priority--, ClearAndSetUpTradeUI: true);
                 }
@@ -70,26 +73,32 @@ namespace XRL.World.Parts
                 if (E.Command == COMMAND_LOOK)
                 {
                     TradeUI.DoVendorLook(E.Item, E.Vendor);
+                    return true;
                 }
                 if (E.Command == COMMAND_IDENTIFY)
                 {
                     TradeUI.DoVendorExamine(E.Item, E.Vendor);
+                    return true;
                 }
                 if (E.Command == COMMAND_REPAIR)
                 {
                     TradeUI.DoVendorRepair(E.Item, E.Vendor);
+                    return true;
                 }
                 if (E.Command == COMMAND_RECHARGE)
                 {
                     TradeUI.DoVendorRecharge(E.Item, E.Vendor);
+                    return true;
                 }
                 if (E.Command == COMMAND_READ)
                 {
                     TradeUI.DoVendorRead(E.Item, E.Vendor);
+                    return true;
                 }
                 if (E.Command == COMMAND_ADD_TO_TRADE)
                 {
                     E.TradeLine.HandleTradeSome();
+                    return true;
                 }
             }
             return base.HandleEvent(E);
