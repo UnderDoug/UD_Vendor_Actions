@@ -170,7 +170,7 @@ namespace UD_Vendor_Actions.Harmony
                 {
                     MetricsManager.LogModError(ModManager.GetMod("UD_Tinkering_Bytes"), $"    {match.name} {match.opcode}");
                 }
-                codeMatcher.Vomit(doVomit);
+                codeMatcher.Vomit(Generator, doVomit);
                 return Instructions;
             }
             metricsCheckSteps++;
@@ -185,7 +185,7 @@ namespace UD_Vendor_Actions.Harmony
                 {
                     MetricsManager.LogModError(ModManager.GetMod("UD_Tinkering_Bytes"), $"    {match.name} | {match.opcode} {match.operand}");
                 }
-                codeMatcher.Vomit(doVomit);
+                codeMatcher.Vomit(Generator, doVomit);
                 return Instructions;
             }
             metricsCheckSteps++;
@@ -200,7 +200,7 @@ namespace UD_Vendor_Actions.Harmony
                 {
                     MetricsManager.LogModError(ModManager.GetMod("UD_Tinkering_Bytes"), $"    {match.name} {match.opcode}");
                 }
-                codeMatcher.Vomit(doVomit);
+                codeMatcher.Vomit(Generator, doVomit);
                 return Instructions;
             }
             metricsCheckSteps++;
@@ -208,7 +208,7 @@ namespace UD_Vendor_Actions.Harmony
             codeMatcher.Instruction.opcode = OpCodes.Ldc_I4_1;
 
             MetricsManager.LogModInfo(ModManager.GetMod("UD_Tinkering_Bytes"), $"Successfully transpiled {patchMethodName}");
-            return codeMatcher.Vomit(doVomit).InstructionEnumeration();
+            return codeMatcher.Vomit(Generator, doVomit).InstructionEnumeration();
         }
 
         public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);

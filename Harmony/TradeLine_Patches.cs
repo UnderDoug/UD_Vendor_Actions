@@ -309,7 +309,6 @@ namespace UD_Vendor_Actions.Harmony
                     }
                 }
             }
-
             Debug.LastIndent = indent;
         }
 
