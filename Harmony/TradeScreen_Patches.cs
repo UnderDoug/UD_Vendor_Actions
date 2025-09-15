@@ -70,6 +70,6 @@ namespace UD_Vendor_Actions.Harmony
             return true;
         }
 
-        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);
+        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => UD_VendorAction.ItemIsTradeUIDisplayOnly(Item);
     }
 }

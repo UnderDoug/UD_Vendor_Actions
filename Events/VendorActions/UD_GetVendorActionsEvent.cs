@@ -6,13 +6,13 @@ using XRL.World;
 namespace UD_Vendor_Actions
 {
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
-    public class GetVendorActionsEvent : IVendorActionEvent<GetVendorActionsEvent>
+    public class UD_GetVendorActionsEvent : I_UD_VendorActionEvent<UD_GetVendorActionsEvent>
     {
-        public Dictionary<string, VendorAction> Actions;
+        public Dictionary<string, UD_VendorAction> Actions;
 
         public bool IncludeModernTradeOptions;
 
-        public GetVendorActionsEvent()
+        public UD_GetVendorActionsEvent()
         {
         }
 
@@ -22,9 +22,9 @@ namespace UD_Vendor_Actions
             Actions = null;
         }
 
-        public static GetVendorActionsEvent FromPool(TradeLine TradeLine, GameObject Vendor, GameObject Item, Dictionary<string, VendorAction> Actions = null, bool IncludeModernTradeOptions = false)
+        public static UD_GetVendorActionsEvent FromPool(TradeLine TradeLine, GameObject Vendor, GameObject Item, Dictionary<string, UD_VendorAction> Actions = null, bool IncludeModernTradeOptions = false)
         {
-            GetVendorActionsEvent E = FromPool(TradeLine, Vendor, Item, null, null);
+            UD_GetVendorActionsEvent E = FromPool(TradeLine, Vendor, Item, null, null);
             if (E != null)
             {
                 E.Actions = Actions ?? new();
@@ -33,9 +33,9 @@ namespace UD_Vendor_Actions
             return E;
         }
 
-        public static void Send(TradeLine TradeLine, GameObject Vendor, GameObject Item, Dictionary<string, VendorAction> Actions, bool IncludeModernTradeOptions = false)
+        public static void Send(TradeLine TradeLine, GameObject Vendor, GameObject Item, Dictionary<string, UD_VendorAction> Actions, bool IncludeModernTradeOptions = false)
         {
-            GetVendorActionsEvent E = FromPool(TradeLine, Vendor, Item, Actions, IncludeModernTradeOptions);
+            UD_GetVendorActionsEvent E = FromPool(TradeLine, Vendor, Item, Actions, IncludeModernTradeOptions);
 
             bool validVendor = GameObject.Validate(ref Vendor);
             bool validItem = GameObject.Validate(ref Item);
@@ -75,7 +75,7 @@ namespace UD_Vendor_Actions
             {
                 return false;
             }
-            VendorAction vendorAction = new()
+            UD_VendorAction vendorAction = new()
             {
                 Name = Name,
                 Key = Key,

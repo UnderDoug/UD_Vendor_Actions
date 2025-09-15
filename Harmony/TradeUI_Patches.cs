@@ -93,9 +93,9 @@ namespace UD_Vendor_Actions.Harmony
         [HarmonyPostfix]
         public static void ShowTradeScreen_SendEvent_Postfix(ref GameObject Trader)
         {
-            EndTradeEvent.Send(The.Player, Trader);
+            UD_EndTradeEvent.Send(The.Player, Trader);
         }
 
-        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);
+        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => UD_VendorAction.ItemIsTradeUIDisplayOnly(Item);
     }
 }

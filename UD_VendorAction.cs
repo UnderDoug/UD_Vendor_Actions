@@ -9,13 +9,13 @@ using XRL.World;
 
 namespace UD_Vendor_Actions
 {
-    public class VendorAction
+    public class UD_VendorAction
     {
-        public class Comparer : IComparer<VendorAction>
+        public class Comparer : IComparer<UD_VendorAction>
         {
             public bool priorityFirst;
 
-            public int Compare(VendorAction a, VendorAction b)
+            public int Compare(UD_VendorAction a, UD_VendorAction b)
             {
                 if (!priorityFirst)
                 {
@@ -25,7 +25,7 @@ namespace UD_Vendor_Actions
             }
         }
 
-        public static VendorAction CurrentAction = null;
+        public static UD_VendorAction CurrentAction = null;
 
         private bool FirstProcessed = false;
 
@@ -77,22 +77,22 @@ namespace UD_Vendor_Actions
                 if (!handled && GameObject.Validate(ref FireOn))
                 {
                     FireOn.FireEvent(@event);
-                    handled = !VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !UD_VendorActionEvent.Check(TradeLine, FireOn, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnVendor)
                 {
                     Vendor.FireEvent(@event);
-                    handled = !VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !UD_VendorActionEvent.Check(TradeLine, Vendor, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnItem)
                 {
                     Item.FireEvent(@event);
-                    handled = !VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !UD_VendorActionEvent.Check(TradeLine, Item, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (!handled && FireOnPlayer)
                 {
                     The.Player.FireEvent(@event);
-                    handled = !VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
+                    handled = !UD_VendorActionEvent.Check(TradeLine, The.Player, Vendor, Item, Owner, Command, out CloseTrade, out cancelSecond, DramsCost, Staggered, FirstProcessed) || handled;
                 }
                 if (cancelSecond)
                 {
@@ -108,20 +108,20 @@ namespace UD_Vendor_Actions
             return handled;
         }
 
-        public static VendorAction ShowVendorActionMenu(Dictionary<string, VendorAction> ActionTable, GameObject Item = null, string Intro = null, IComparer<VendorAction> Comparer = null, bool MouseClick = false)
+        public static UD_VendorAction ShowVendorActionMenu(Dictionary<string, UD_VendorAction> ActionTable, GameObject Item = null, string Intro = null, IComparer<UD_VendorAction> Comparer = null, bool MouseClick = false)
         {
-            List<VendorAction> actionsList = new();
-            foreach ((string _, VendorAction action) in ActionTable)
+            List<UD_VendorAction> actionsList = new();
+            foreach ((string _, UD_VendorAction action) in ActionTable)
             {
                 actionsList.Add(action);
             }
-            actionsList.Sort(Comparer ??= new VendorAction.Comparer(){ priorityFirst = true });
+            actionsList.Sort(Comparer ??= new UD_VendorAction.Comparer(){ priorityFirst = true });
 
-            Dictionary<char, VendorAction> actionsByHotkey = new(16);
+            Dictionary<char, UD_VendorAction> actionsByHotkey = new(16);
 
-            List<VendorAction> actionsWithoutHotkeys = null;
+            List<UD_VendorAction> actionsWithoutHotkeys = null;
             StringBuilder SB = null;
-            foreach (VendorAction vendorAction in actionsList)
+            foreach (UD_VendorAction vendorAction in actionsList)
             {
                 if (vendorAction.Key != ' ' && !ControlManager.isKeyMapped(vendorAction.Key, new List<string> { "UINav", "Menus" }))
                 {
@@ -144,7 +144,7 @@ namespace UD_Vendor_Actions
             if (actionsWithoutHotkeys != null)
             {
                 SB ??= Event.NewStringBuilder();
-                foreach (VendorAction vendorAction in actionsWithoutHotkeys)
+                foreach (UD_VendorAction vendorAction in actionsWithoutHotkeys)
                 {
                     char actionHotkey = char.ToUpper(vendorAction.Key);
                     if (actionHotkey != vendorAction.Key && !actionsByHotkey.ContainsKey(actionHotkey))
@@ -186,7 +186,7 @@ namespace UD_Vendor_Actions
             }
             List<string> options = new();
             List<char> hotkeys = new();
-            foreach (VendorAction action in actionsList)
+            foreach (UD_VendorAction action in actionsList)
             {
                 options.Add(action.Display);
                 hotkeys.Add(action.Key);
@@ -272,7 +272,7 @@ namespace UD_Vendor_Actions
             return Display;
         }
 
-        public static int SortCompare(VendorAction a, VendorAction b)
+        public static int SortCompare(UD_VendorAction a, UD_VendorAction b)
         {
             bool aKeyIsBlank = a.Key == ' ';
             bool bKeyIsBlank = b.Key == ' ';
@@ -300,7 +300,7 @@ namespace UD_Vendor_Actions
             return PriorityCompare(a, b);
         }
 
-        public static int PriorityCompare(VendorAction a, VendorAction b)
+        public static int PriorityCompare(UD_VendorAction a, UD_VendorAction b)
         {
             int priorityComparison = a.Priority.CompareTo(b.Priority);
             if (priorityComparison != 0)

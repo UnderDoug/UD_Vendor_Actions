@@ -3,17 +3,17 @@
 namespace UD_Vendor_Actions
 {
     [GameEvent(Cascade = CASCADE_INVENTORY, Cache = Cache.Pool)]
-    public class EndTradeEvent : ModSingletonEvent<EndTradeEvent>
+    public class UD_EndTradeEvent : ModSingletonEvent<UD_EndTradeEvent>
     {
         public new static readonly int CascadeLevel = CASCADE_INVENTORY;
 
-        public static string RegisteredEventID => nameof(EndTradeEvent);
+        public static string RegisteredEventID => nameof(UD_EndTradeEvent);
 
         public GameObject Actor;
 
         public GameObject Trader;
 
-        public EndTradeEvent()
+        public UD_EndTradeEvent()
         {
         }
 

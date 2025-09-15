@@ -16,7 +16,7 @@ using UD_Modding_Toolbox;
 
 using static UD_Vendor_Actions.Utils;
 
-using static UD_Vendor_Actions.VendorAction;
+using static UD_Vendor_Actions.UD_VendorAction;
 
 namespace UD_Vendor_Actions.Harmony
 {
@@ -29,7 +29,7 @@ namespace UD_Vendor_Actions.Harmony
 
         public static bool CloseTrade = false;
 
-        private static VendorAction _CurrentAction = null;
+        private static UD_VendorAction _CurrentAction = null;
 
         [HarmonyPatch(
             declaringType: typeof(TradeLine),
@@ -202,10 +202,10 @@ namespace UD_Vendor_Actions.Harmony
             {
                 Debug.Entry(4, $"{methodName}{methodArgs} for {nameof(item)}: {item?.DebugName}",
                     Indent: indent + 1, Toggle: doDebug);
-                Dictionary<string, VendorAction> actions = new();
+                Dictionary<string, UD_VendorAction> actions = new();
 
-                Debug.Entry(4, $"Sending {nameof(GetVendorActionsEvent)}", Indent: indent + 2, Toggle: doDebug);
-                GetVendorActionsEvent.Send(TradeLine, Vendor, item, actions, true);
+                Debug.Entry(4, $"Sending {nameof(UD_GetVendorActionsEvent)}", Indent: indent + 2, Toggle: doDebug);
+                UD_GetVendorActionsEvent.Send(TradeLine, Vendor, item, actions, true);
 
                 Debug.Entry(4, $"awaiting {nameof(APIDispatch)}.{nameof(APIDispatch.RunAndWaitAsync)}",
                     Indent: indent + 2, Toggle: doDebug);
@@ -325,6 +325,6 @@ namespace UD_Vendor_Actions.Harmony
             Debug.LastIndent = indent;
         }
 
-        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => VendorAction.ItemIsTradeUIDisplayOnly(Item);
+        public static bool ItemIsTradeUIDisplayOnly(GameObject Item) => UD_VendorAction.ItemIsTradeUIDisplayOnly(Item);
     }
 }

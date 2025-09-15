@@ -4,8 +4,8 @@ using XRL.World;
 namespace UD_Vendor_Actions
 {
     [GameEvent(Base = true, Cascade = CASCADE_NONE, Cache = Cache.Pool)]
-    public abstract class IVendorActionEvent<T> : ModPooledEvent<T>
-        where T : IVendorActionEvent<T>, new()
+    public abstract class I_UD_VendorActionEvent<T> : ModPooledEvent<T>
+        where T : I_UD_VendorActionEvent<T>, new()
     {
         public new static readonly int CascadeLevel = CASCADE_NONE;
 
@@ -21,7 +21,7 @@ namespace UD_Vendor_Actions
 
         public TradeLine TradeLine;
 
-        public IVendorActionEvent()
+        public I_UD_VendorActionEvent()
         {
         }
 

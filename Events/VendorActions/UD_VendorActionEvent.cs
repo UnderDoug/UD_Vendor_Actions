@@ -4,7 +4,7 @@ using XRL.World;
 namespace UD_Vendor_Actions
 {
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
-    public class VendorActionEvent : IVendorActionEvent<VendorActionEvent>
+    public class UD_VendorActionEvent : I_UD_VendorActionEvent<UD_VendorActionEvent>
     {
         public bool Staggered;
 
@@ -14,7 +14,7 @@ namespace UD_Vendor_Actions
 
         public bool CancelSecondRequested;
 
-        public VendorActionEvent()
+        public UD_VendorActionEvent()
         {
             Staggered = false;
             Second = false;
@@ -35,7 +35,7 @@ namespace UD_Vendor_Actions
         {
             CloseTrade = false;
             CancelSecond = false;
-            VendorActionEvent E = FromPool(TradeLine, Vendor, Item, Command, DramsCost);
+            UD_VendorActionEvent E = FromPool(TradeLine, Vendor, Item, Command, DramsCost);
             E.Staggered = Staggered;
             E.Second = Second;
 
@@ -51,8 +51,8 @@ namespace UD_Vendor_Actions
                 CloseTrade = E.IsCloseTradeRequested();
                 if (!Staggered || Second)
                 {
-                    AfterVendorActionEvent.SendAfter(Handler, E);
-                    OwnerAfterVendorActionEvent.SendAfter(Owner, E);
+                    UD_AfterVendorActionEvent.SendAfter(Handler, E);
+                    UD_OwnerAfterVendorActionEvent.SendAfter(Owner, E);
                 }
             }
             else
@@ -78,21 +78,21 @@ namespace UD_Vendor_Actions
             return CancelSecondRequested;
         }
 
-        public static implicit operator VendorActionEvent(AfterVendorActionEvent E)
+        public static implicit operator UD_VendorActionEvent(UD_AfterVendorActionEvent E)
         {
             return FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
         }
-        public static implicit operator AfterVendorActionEvent(VendorActionEvent E)
+        public static implicit operator UD_AfterVendorActionEvent(UD_VendorActionEvent E)
         {
-            return AfterVendorActionEvent.FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
+            return UD_AfterVendorActionEvent.FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
         }
-        public static implicit operator VendorActionEvent(OwnerAfterVendorActionEvent E)
+        public static implicit operator UD_VendorActionEvent(UD_OwnerAfterVendorActionEvent E)
         {
             return FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
         }
-        public static implicit operator OwnerAfterVendorActionEvent(VendorActionEvent E)
+        public static implicit operator UD_OwnerAfterVendorActionEvent(UD_VendorActionEvent E)
         {
-            return OwnerAfterVendorActionEvent.FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
+            return UD_OwnerAfterVendorActionEvent.FromPool(E.TradeLine, E.Vendor, E.Item, E.Command, E.DramsCost);
         }
     }
 }

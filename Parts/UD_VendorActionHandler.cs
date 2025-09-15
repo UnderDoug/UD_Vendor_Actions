@@ -8,7 +8,7 @@ using static XRL.World.Parts.Skill.Tinkering;
 namespace XRL.World.Parts
 {
     [Serializable]
-    public class UD_VendorActionHandler : IScribedPart, IVendorActionEventHandler
+    public class UD_VendorActionHandler : IScribedPart, I_UD_VendorActionEventHandler
     {
         public const string COMMAND_LOOK = "CmdVendorLook";
         public const string COMMAND_ADD_TO_TRADE = "CmdTradeAdd";
@@ -23,15 +23,15 @@ namespace XRL.World.Parts
 
         public override void Register(GameObject Object, IEventRegistrar Registrar)
         {
-            Registrar.Register(VendorActionEvent.ID, EventOrder.LATE);
+            Registrar.Register(UD_VendorActionEvent.ID, EventOrder.LATE);
             base.Register(Object, Registrar);
         }
         public override bool WantEvent(int ID, int Cascade)
         {
             return base.WantEvent(ID, Cascade)
-                || ID == GetVendorActionsEvent.ID;
+                || ID == UD_GetVendorActionsEvent.ID;
         }
-        public virtual bool HandleEvent(GetVendorActionsEvent E)
+        public virtual bool HandleEvent(UD_GetVendorActionsEvent E)
         {
             if (E.Vendor != null && ParentObject == E.Vendor)
             {
@@ -40,7 +40,7 @@ namespace XRL.World.Parts
                 Tinkering_Repair vendorRepairSkill = E.Vendor.GetPart<Tinkering_Repair>();
                 int priority = 10;
                 E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: priority--);
-                if (E.IncludeModernTradeOptions && !VendorAction.ItemIsTradeUIDisplayOnly(E.Item))
+                if (E.IncludeModernTradeOptions && !UD_VendorAction.ItemIsTradeUIDisplayOnly(E.Item))
                 {
                     E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, ProcessAfterAwait: true);
                 }
@@ -66,7 +66,7 @@ namespace XRL.World.Parts
             }
             return base.HandleEvent(E);
         }
-        public virtual bool HandleEvent(VendorActionEvent E)
+        public virtual bool HandleEvent(UD_VendorActionEvent E)
         {
             if (E.Vendor != null && ParentObject == E.Vendor)
             {

@@ -3,9 +3,9 @@
 namespace UD_Vendor_Actions
 {
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
-    public class AfterVendorActionEvent : IVendorActionEvent<AfterVendorActionEvent>
+    public class UD_OwnerAfterVendorActionEvent : I_UD_VendorActionEvent<UD_OwnerAfterVendorActionEvent>
     {
-        public AfterVendorActionEvent()
+        public UD_OwnerAfterVendorActionEvent()
         {
         }
 
