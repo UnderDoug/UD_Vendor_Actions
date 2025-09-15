@@ -25,6 +25,8 @@ namespace UD_Vendor_Actions
             }
         }
 
+        public static VendorAction CurrentAction = null;
+
         private bool FirstProcessed = false;
 
         public string Name;

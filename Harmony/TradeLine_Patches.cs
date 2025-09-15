@@ -1,20 +1,24 @@
 ﻿using HarmonyLib;
-using Qud.UI;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
-using UD_Modding_Toolbox;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
+using Qud.UI;
+
 using XRL;
 using XRL.UI;
 using XRL.UI.Framework;
 using XRL.World;
+
+using UnityEngine.EventSystems;
+
+using UD_Modding_Toolbox;
+
 using static UD_Modding_Toolbox.Const;
 using static UD_Modding_Toolbox.Options;
 using static UD_Modding_Toolbox.Utils;
+
+using static UD_Vendor_Actions.VendorAction;
 
 namespace UD_Vendor_Actions.Harmony
 {
@@ -27,7 +31,7 @@ namespace UD_Vendor_Actions.Harmony
 
         public static bool CloseTrade = false;
 
-        public static VendorAction VendorAction = null;
+        private static VendorAction _CurrentAction = null;
 
         [HarmonyPatch(
             declaringType: typeof(TradeLine),
@@ -38,8 +42,6 @@ namespace UD_Vendor_Actions.Harmony
         public static IEnumerable<CodeInstruction> setData_UseFormatPrice_Transpile(IEnumerable<CodeInstruction> Instructions)
         {
             string patchMethodName = $"{nameof(TradeLine_Patches)}.{nameof(TradeLine.setData)}";
-
-            // Courtesy Books (mostly)
 
             // string text2 = $"{TradeUI.GetValue(tradeLineData.go, tradeLineData.traderInventory):0.00}";
             //      Start Below
@@ -54,6 +56,8 @@ namespace UD_Vendor_Actions.Harmony
             // IL_0249: call string[mscorlib] System.String::Format(string, object)
             //      End Above
             // IL_024e: stloc.3
+
+            // Courtesy Books (mostly)
 
             CodeMatcher codeMatcher = new(Instructions);
 
@@ -156,7 +160,8 @@ namespace UD_Vendor_Actions.Harmony
         {
             Success = false;
             CloseTrade = false;
-            VendorAction = null;
+            CurrentAction = null;
+            _CurrentAction = null;
             HandleVendorActions(TradeScreen.Trader, __instance);
 
             MouseClick = false;
@@ -167,7 +172,8 @@ namespace UD_Vendor_Actions.Harmony
             }
             Success = false;
             CloseTrade = false;
-            VendorAction = null;
+            CurrentAction = null;
+            _CurrentAction = null;
             return false; // skip the patched method. 
         }
 
@@ -207,50 +213,52 @@ namespace UD_Vendor_Actions.Harmony
                     Indent: indent + 2, Toggle: doDebug);
                 await APIDispatch.RunAndWaitAsync(delegate
                 {
-                    Debug.Entry(4, $"{nameof(VendorAction.ShowVendorActionMenu)}",
+                    Debug.Entry(4, $"{nameof(CurrentAction.ShowVendorActionMenu)}",
                         Indent: indent + 2, Toggle: doDebug);
-                    VendorAction = VendorAction.ShowVendorActionMenu(
+                    CurrentAction = ShowVendorActionMenu(
                         ActionTable: actions,
                         Item: item,
                         Intro: "Choose an action",
                         MouseClick: MouseClick);
 
-                    if (VendorAction != null)
+                    _CurrentAction = CurrentAction;
+
+                    if (CurrentAction != null)
                     {
-                        processAfterAwait = VendorAction.ProcessAfterAwait;
+                        processAfterAwait = CurrentAction.ProcessAfterAwait;
                         Debug.LoopItem(4, $"{nameof(processAfterAwait)}", $"{processAfterAwait}", 
                             Good: processAfterAwait, Indent: indent + 3, Toggle: doDebug);
 
-                        processSecondAfterAwait = VendorAction.ProcessSecondAfterAwait;
+                        processSecondAfterAwait = CurrentAction.ProcessSecondAfterAwait;
                         Debug.LoopItem(4, $"{nameof(processSecondAfterAwait)}", $"{processSecondAfterAwait}", 
                             Good: processSecondAfterAwait, Indent: indent + 3, Toggle: doDebug);
 
-                        clearAndSetUpTradeUI = VendorAction.ClearAndSetUpTradeUI;
+                        clearAndSetUpTradeUI = CurrentAction.ClearAndSetUpTradeUI;
                         Debug.LoopItem(4, $"{nameof(clearAndSetUpTradeUI)}", $"{clearAndSetUpTradeUI}", 
                             Good: clearAndSetUpTradeUI, Indent: indent + 3, Toggle: doDebug);
 
-                        staggered = VendorAction.Staggered;
+                        staggered = CurrentAction.Staggered;
                         Debug.LoopItem(4, $"{nameof(staggered)}", $"{staggered}", 
                             Good: staggered, Indent: indent + 3, Toggle: doDebug);
 
-                        closeTradeBeforeProcessingSecond = VendorAction.CloseTradeBeforeProcessingSecond;
+                        closeTradeBeforeProcessingSecond = CurrentAction.CloseTradeBeforeProcessingSecond;
                         Debug.LoopItem(4, $"{nameof(closeTradeBeforeProcessingSecond)}", $"{closeTradeBeforeProcessingSecond}", 
                             Good: closeTradeBeforeProcessingSecond, Indent: indent + 3, Toggle: doDebug);
                     }
 
-                    if (VendorAction != null && !processAfterAwait)
+                    if (CurrentAction != null && !processAfterAwait)
                     {
-                        Debug.Entry(4, $"!{nameof(VendorAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
-                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}", 
+                        Debug.Entry(4, $"!{nameof(CurrentAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}", 
                             Indent: indent + 3, Toggle: doDebug);
-                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+                        Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
 
-                        if (VendorAction != null && staggered && !closeTradeBeforeProcessingSecond)
+                        if (CurrentAction != null && staggered && !closeTradeBeforeProcessingSecond)
                         {
-                            Debug.Entry(4, $"!{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
-                            Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                            Debug.Entry(4, $"!{nameof(CurrentAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                            Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}",
                                 Indent: indent + 4, Toggle: doDebug);
-                            Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+                            Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                         }
                         if (!tradeClosed && CloseTrade)
                         {
@@ -258,19 +266,22 @@ namespace UD_Vendor_Actions.Harmony
                             ConversationUI.Escape();
                         }
                         Debug.LoopItem(4, $"{nameof(CloseTrade)}", $"{CloseTrade}", Good: CloseTrade, Indent: indent + 3, Toggle: doDebug);
-                        if (VendorAction != null && staggered && closeTradeBeforeProcessingSecond)
+                        if (CurrentAction != null && staggered && closeTradeBeforeProcessingSecond)
                         {
-                            Debug.Entry(4, $"{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
-                            Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                            Debug.Entry(4, $"{nameof(CurrentAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                            Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}",
                                 Indent: indent + 4, Toggle: doDebug);
-                            Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+                            Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                         }
                     }
                 });
                 Debug.Entry(4, $"finished {nameof(APIDispatch)}.{nameof(APIDispatch.RunAndWaitAsync)}",
                     Indent: indent + 2, Toggle: doDebug);
 
-                if (VendorAction != null && clearAndSetUpTradeUI && !CloseTrade)
+                // this ensures the current action can't influence the contents of the trade UI between firings of the action
+                CurrentAction = null;
+
+                if (clearAndSetUpTradeUI && !CloseTrade)
                 {
                     TradeLine.screen.ClearAndSetupTradeUI();
                 }
@@ -280,19 +291,23 @@ namespace UD_Vendor_Actions.Harmony
                     Debug.Entry(4, $"Calling {nameof(TradeLine.screen.UpdateViewFromData)}", Indent: indent + 2, Toggle: doDebug);
                     TradeLine.screen.UpdateViewFromData();
                 }
-                if (VendorAction != null && (processAfterAwait || processSecondAfterAwait))
-                {
-                    Debug.Entry(4, $"{nameof(VendorAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
-                    Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
-                        Indent: indent + 3, Toggle: doDebug);
-                    Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
 
-                    if (VendorAction != null && staggered && !closeTradeBeforeProcessingSecond)
+                // obviously, we need the action again to keep going
+                CurrentAction = _CurrentAction;
+
+                if (CurrentAction != null && (processAfterAwait || processSecondAfterAwait))
+                {
+                    Debug.Entry(4, $"{nameof(CurrentAction.ProcessAfterAwait)}", Indent: indent + 2, Toggle: doDebug);
+                    Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}",
+                        Indent: indent + 3, Toggle: doDebug);
+                    Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+
+                    if (CurrentAction != null && staggered && !closeTradeBeforeProcessingSecond)
                     {
-                        Debug.Entry(4, $"!{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
-                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                        Debug.Entry(4, $"!{nameof(CurrentAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}",
                             Indent: indent + 4, Toggle: doDebug);
-                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+                        Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                     }
                     if (!tradeClosed && CloseTrade)
                     {
@@ -300,12 +315,12 @@ namespace UD_Vendor_Actions.Harmony
                         ConversationUI.Escape();
                     }
                     Debug.LoopItem(4, $"{nameof(CloseTrade)}", $"{CloseTrade}", Good: CloseTrade, Indent: indent + 3, Toggle: doDebug);
-                    if (VendorAction != null && staggered && closeTradeBeforeProcessingSecond)
+                    if (CurrentAction != null && staggered && closeTradeBeforeProcessingSecond)
                     {
-                        Debug.Entry(4, $"{nameof(VendorAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
-                        Debug.Entry(4, $"{nameof(VendorAction)}: {VendorAction.Name}, {nameof(VendorAction.Process)}",
+                        Debug.Entry(4, $"{nameof(CurrentAction.CloseTradeBeforeProcessingSecond)}", Indent: indent + 3, Toggle: doDebug);
+                        Debug.Entry(4, $"{nameof(CurrentAction)}: {CurrentAction.Name}, {nameof(CurrentAction.Process)}",
                             Indent: indent + 4, Toggle: doDebug);
-                        Success = VendorAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
+                        Success = CurrentAction.Process(TradeLine, Vendor, item, owner, out CloseTrade);
                     }
                 }
             }
