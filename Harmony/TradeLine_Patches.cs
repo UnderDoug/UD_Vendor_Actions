@@ -14,9 +14,7 @@ using UnityEngine.EventSystems;
 
 using UD_Modding_Toolbox;
 
-using static UD_Modding_Toolbox.Const;
-using static UD_Modding_Toolbox.Options;
-using static UD_Modding_Toolbox.Utils;
+using static UD_Vendor_Actions.Utils;
 
 using static UD_Vendor_Actions.VendorAction;
 
@@ -69,7 +67,7 @@ namespace UD_Vendor_Actions.Harmony
 
             if (codeMatcher.IsInvalid)
             {
-                MetricsManager.LogModError(ModManager.GetMod("UD_Vendor_Actions"), $"{patchMethodName}: {nameof(CodeMatcher.MatchStartForward)} failed to find instruction {OpCodes.Stloc_3}");
+                MetricsManager.LogModError(ThisMod, $"{patchMethodName}: {nameof(CodeMatcher.MatchStartForward)} failed to find instruction {OpCodes.Stloc_3}");
                 return Instructions;
             }
 
@@ -83,7 +81,7 @@ namespace UD_Vendor_Actions.Harmony
 
             if (codeMatcher.IsInvalid)
             {
-                MetricsManager.LogModError(ModManager.GetMod("UD_Vendor_Actions"), $"{patchMethodName}: {nameof(CodeMatcher.MatchStartBackwards)} failed to find instruction {OpCodes.Ldstr} {"{0:0.00}".Quote()}");
+                MetricsManager.LogModError(ThisMod, $"{patchMethodName}: {nameof(CodeMatcher.MatchStartBackwards)} failed to find instruction {OpCodes.Ldstr} {"{0:0.00}".Quote()}");
                 return Instructions;
             }
 
@@ -105,7 +103,7 @@ namespace UD_Vendor_Actions.Harmony
                     }
                 );
 
-            MetricsManager.LogModInfo(ModManager.GetMod("UD_Vendor_Actions"), $"Successfully transpiled {patchMethodName}");
+            MetricsManager.LogModInfo(ThisMod, $"Successfully transpiled {patchMethodName}");
 
             return codeMatcher.InstructionEnumeration();
         }
