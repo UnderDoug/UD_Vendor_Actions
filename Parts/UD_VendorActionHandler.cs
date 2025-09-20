@@ -1,12 +1,14 @@
 ﻿using System;
 using XRL.UI;
 using XRL.World.Parts.Skill;
+
 using UD_Vendor_Actions;
 
 using static XRL.World.Parts.Skill.Tinkering;
 
 namespace XRL.World.Parts
 {
+    [AlwaysHandlesVendor_UD_VendorActions]
     [Serializable]
     public class UD_VendorActionHandler : IScribedPart, I_UD_VendorActionEventHandler
     {
@@ -23,7 +25,7 @@ namespace XRL.World.Parts
 
         public override void Register(GameObject Object, IEventRegistrar Registrar)
         {
-            Registrar.Register(UD_VendorActionEvent.ID, EventOrder.LATE);
+            Registrar.Register(UD_VendorActionEvent.ID, EventOrder.LATE, Serialize: true);
             base.Register(Object, Registrar);
         }
         public override bool WantEvent(int ID, int Cascade)

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <objects>
   
-  <!-- Adds a handler for the VenderActionEvents added by this mod -->
+  <!-- This has been superceded by use of an attribute -->
+  <!-- Adds a handler for the VenderActionEvents added by this mod >
   <object Name="PhysicalObject" Load="Merge">
     <part Name="UD_VendorActionHandler" />
-  </object>
+  </object-->
   
 </objects>

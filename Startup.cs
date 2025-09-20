@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 using Qud.UI;
 
@@ -12,6 +13,11 @@ using UD_Modding_Toolbox;
 
 namespace UD_Vendor_Actions
 {
+    public static class Startup
+    {
+        public static bool SaveStartedWithVendorActions => (bool)The.Game?.GetBooleanGameState(nameof(UD_Vendor_Actions_GameBasedInitialiser));
+    }
+
     // Start-up calls in order that they happen.
 
     [HasModSensitiveStaticCache]
@@ -51,6 +57,8 @@ namespace UD_Vendor_Actions
             // Called once when world is first generated.
 
             // The.Game registered events should go here.
+
+            The.Game?.SetBooleanGameState(nameof(UD_Vendor_Actions_GameBasedInitialiser), true);
         }
     }
 

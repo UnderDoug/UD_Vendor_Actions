@@ -17,6 +17,7 @@ using UD_Modding_Toolbox;
 using static UD_Vendor_Actions.Utils;
 
 using static UD_Vendor_Actions.UD_VendorAction;
+using XRL.World.Parts;
 
 namespace UD_Vendor_Actions.Harmony
 {
@@ -26,6 +27,8 @@ namespace UD_Vendor_Actions.Harmony
         public static bool MouseClick = false;
 
         public static bool Success = false;
+
+        public static bool NeedsFallbackToBase = false;
 
         public static bool CloseTrade = false;
 
@@ -157,6 +160,7 @@ namespace UD_Vendor_Actions.Harmony
         public static bool HandleVendorActions_EventInstead_Prefix(ref TradeLine __instance)
         {
             Success = false;
+            NeedsFallbackToBase = false;
             CloseTrade = false;
             CurrentAction = null;
             _CurrentAction = null;
@@ -168,11 +172,13 @@ namespace UD_Vendor_Actions.Harmony
             {
                 // potentially do something here?
             }
+            bool runPatchedMethod = NeedsFallbackToBase;
             Success = false;
+            NeedsFallbackToBase = false;
             CloseTrade = false;
             CurrentAction = null;
             _CurrentAction = null;
-            return false; // skip the patched method. 
+            return runPatchedMethod; // skip the patched method.
         }
 
         public static async void HandleVendorActions(GameObject Vendor, TradeLine TradeLine)
@@ -202,10 +208,27 @@ namespace UD_Vendor_Actions.Harmony
             {
                 Debug.Entry(4, $"{methodName}{methodArgs} for {nameof(item)}: {item?.DebugName}",
                     Indent: indent + 1, Toggle: doDebug);
-                Dictionary<string, UD_VendorAction> actions = new();
 
+                ApplyVendorActionHandlerPartsFromAttribute(item, typeof(AlwaysHandlesItem_UD_VendorActionsAttribute));
+                if (!Vendor.HasPart<UD_VendorActionHandler>())
+                {
+                    MetricsManager.LogPotentialModError(ThisMod, 
+                        $"{Vendor?.DebugName ?? Const.NULL} missing {nameof(UD_VendorActionHandler)}." +
+                        $" This may be caused by enabling this mod for an already existing save." +
+                        $" If no {nameof(UD_VendorAction)}s show up please report this error to " +
+                        $"{ThisMod?.Manifest?.Author?.Strip()} on the steam workshop.");
+                    // Vendor.RequirePart<UD_VendorActionHandler>();
+                }
+
+                Dictionary<string, UD_VendorAction> actions = new();
                 Debug.Entry(4, $"Sending {nameof(UD_GetVendorActionsEvent)}", Indent: indent + 2, Toggle: doDebug);
                 UD_GetVendorActionsEvent.Send(TradeLine, Vendor, item, actions, true);
+
+                NeedsFallbackToBase = actions.IsNullOrEmpty();
+                if (NeedsFallbackToBase)
+                {
+                    return;
+                }
 
                 Debug.Entry(4, $"awaiting {nameof(APIDispatch)}.{nameof(APIDispatch.RunAndWaitAsync)}",
                     Indent: indent + 2, Toggle: doDebug);

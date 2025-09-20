@@ -3,6 +3,8 @@ using Qud.UI;
 using XRL;
 using XRL.World;
 
+using UD_Modding_Toolbox;
+
 namespace UD_Vendor_Actions
 {
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
@@ -65,6 +67,19 @@ namespace UD_Vendor_Actions
                         blocked = !The.Player.HandleEvent(E);
                     }
                 }
+            }
+            if (E.Actions.IsNullOrEmpty())
+            {
+                MetricsManager.LogPotentialModError(Utils.ThisMod, 
+                    $"{nameof(UD_GetVendorActionsEvent)}.{nameof(Send)}(" +
+                    $"{nameof(Vendor)}: {Vendor?.DebugName ?? Const.NULL}, " +
+                    $"{nameof(Item)}: {Item?.DebugName ?? Const.NULL})" +
+                    $"{nameof(Actions)} returned empty when \"Look\" should always be an option.\n" +
+                    $"----{nameof(Vendor)}:\n" +
+                    $"{Vendor?.GetBlueprint()?.BlueprintXML() ?? $"Failed to get {nameof(GameObjectBlueprint.BlueprintXML)}"}" +
+                    $"----{nameof(Item)}:\n" +
+                    $"{Item?.GetBlueprint()?.BlueprintXML() ?? $"Failed to get {nameof(GameObjectBlueprint.BlueprintXML)}"}");
+                MetricsManager.LogModInfo(Utils.ThisMod, $"Please report the above error to {Utils.ThisMod?.Manifest?.Author?.Strip()} on the steam workshop.");
             }
         }
         public bool AddAction(string Name, string Display = null, string Command = null, string PreferToHighlight = null, char Key = ' ', int Default = 0, int Priority = 0, int? DramsCost = null, bool FireOnVendor = true, bool FireOnItem = false, bool FireOnPlayer = false, GameObject FireOn = null, bool Override = false, bool ProcessAfterAwait = false, bool ProcessSecondAfterAwait = false, bool ClearAndSetUpTradeUI = false, bool Staggered = false, bool CloseTradeBeforeProcessingSecond = false, bool CloseTradeAfterProcessing = false)

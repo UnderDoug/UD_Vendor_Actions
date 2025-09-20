@@ -90,6 +90,18 @@ namespace UD_Vendor_Actions.Harmony
             methodName: nameof(TradeUI.ShowTradeScreen),
             argumentTypes: new Type[] { typeof(GameObject), typeof(float), typeof(TradeUI.TradeScreenMode) },
             argumentVariations: new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal })]
+        [HarmonyPrefix]
+        public static bool ShowTradeScreen_GetVendorActionVendorHandlers_Prefix(ref GameObject Trader)
+        {
+            Utils.ApplyVendorActionHandlerPartsFromAttribute(Trader, typeof(AlwaysHandlesVendor_UD_VendorActionsAttribute));
+            return true;
+        }
+
+        [HarmonyPatch(
+            declaringType: typeof(TradeUI),
+            methodName: nameof(TradeUI.ShowTradeScreen),
+            argumentTypes: new Type[] { typeof(GameObject), typeof(float), typeof(TradeUI.TradeScreenMode) },
+            argumentVariations: new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal })]
         [HarmonyPostfix]
         public static void ShowTradeScreen_SendEvent_Postfix(ref GameObject Trader)
         {

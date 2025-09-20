@@ -209,8 +209,10 @@ namespace UD_Vendor_Actions
                 // Would love to figure this out.
                 // popupLocation = PopupMessage.LOCATION_AT_MOUSE_CURSOR;
             }
+            string itemBaseDisplayName = Item?.Render?.DisplayName ?? Item.Blueprint;
             int pickedEntry = Popup.PickOption(
-                Intro: Intro ?? (isConfused ? Item.DisplayName : null),
+                Title: isConfused ? null : GetDisplayNameEvent.GetFor(Item, itemBaseDisplayName, Context: nameof(ShowVendorActionMenu)),
+                Intro: Intro ?? (isConfused ? GetDisplayNameEvent.GetFor(Item, itemBaseDisplayName, Context: nameof(ShowVendorActionMenu)) : null),
                 Options: options.ToArray(),
                 Hotkeys: hotkeys.ToArray(),
                 Context: isConfused ? null : Item,
