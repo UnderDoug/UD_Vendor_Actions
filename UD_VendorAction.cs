@@ -73,7 +73,7 @@ namespace UD_Vendor_Actions
             if (Staggered || !FirstProcessed)
             {
                 Event @event = Event.New("VendorCommandActivating", nameof(Vendor), Vendor, nameof(Item), Item, nameof(Owner), Owner);
-                Owner.FireEvent(@event);
+                Owner?.FireEvent(@event);
                 if (!handled && GameObject.Validate(ref FireOn))
                 {
                     FireOn.FireEvent(@event);
