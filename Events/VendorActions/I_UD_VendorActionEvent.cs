@@ -79,8 +79,8 @@ namespace UD_Vendor_Actions
             return null;
         }
 
-        /// <summary>Handles sending the "after" subset of events in this event family.<br/><br/>
-        /// Forms part of the near 1:1 copy this code is of the decompiled base game's <see cref="InventoryActionEvent"/> family of <see cref="MinEvent"/>.</summary>
+        /// <summary>Handles sending the "after" subset of events in this event family.</summary>
+        /// <remarks>Forms part of the near 1:1 copy this code is of the decompiled base game's <see cref="InventoryActionEvent"/> family of <see cref="MinEvent"/>.</remarks>
         /// <param name="Object">The object that will call <see cref="IModEventHandler{I_UD_VendorActionEvent{T}}.HandleEvent(I_UD_VendorActionEvent{T})"/>.</param>
         /// <param name="Source">The parent <see cref="I_UD_VendorActionEvent{T}"/> that called this method.</param>
         public static void SendAfter(GameObject Object, T Source)
