@@ -3,15 +3,22 @@ using XRL.World;
 
 namespace UD_Vendor_Actions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
     public class UD_VendorActionEvent : I_UD_VendorActionEvent<UD_VendorActionEvent>
     {
+        /// <summary> </summary>
         public bool Staggered;
 
+        /// <summary> </summary>
         public bool Second;
 
+        /// <summary> </summary>
         public bool CloseTradeRequested;
 
+        /// <summary> </summary>
         public bool CancelSecondRequested;
 
         public UD_VendorActionEvent()
@@ -31,6 +38,21 @@ namespace UD_Vendor_Actions
             CancelSecondRequested = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="TradeLine">The <see cref="TradeLine"/> instance from which the method was called.</param>
+        /// <param name="Handler"></param>
+        /// <param name="Vendor"></param>
+        /// <param name="Item"></param>
+        /// <param name="Owner"></param>
+        /// <param name="Command"></param>
+        /// <param name="CloseTrade"></param>
+        /// <param name="CancelSecond"></param>
+        /// <param name="DramsCost"></param>
+        /// <param name="Staggered"></param>
+        /// <param name="Second"></param>
+        /// <returns></returns>
         public static bool Check(TradeLine TradeLine, GameObject Handler, GameObject Vendor, GameObject Item, GameObject Owner, string Command, out bool CloseTrade, out bool CancelSecond, int? DramsCost = null, bool Staggered = false, bool Second = false)
         {
             CloseTrade = false;
@@ -61,18 +83,28 @@ namespace UD_Vendor_Actions
             }
             return true;
         }
+
+        /// <summary></summary>
         public void RequestTradeClose()
         {
             CloseTradeRequested = true;
         }
+
+        /// <summary></summary>
+        /// <returns></returns>
         public bool IsCloseTradeRequested()
         {
             return CloseTradeRequested;
         }
+
+        /// <summary></summary>
         public void RequestCancelSecond()
         {
             CancelSecondRequested = true;
         }
+
+        /// <summary></summary>
+        /// <returns></returns>
         public bool IsCancelSecondRequested()
         {
             return CancelSecondRequested;
