@@ -12,7 +12,7 @@ Things like tinkers repairing broken items and identifyign weird artifacts for t
 
 For this quick instructional, we'll be making an alternative to a tinker's ability to identify (examine) an object for the player.
 
-### Making a Part
+### Making a Vendor Action Handling Part
 An `IPart` or its derivative may implement either `I_UD_VendorActionEventHandler` or any of the individual `IModEventHandler<T>` interfaces to enable handling of `UD_GetVendorActionEvent` and `UD_VendorActionEvent`. We'll do it the the long way so I can put helpful comments in there.
 
 Normal `WantEvent`ing and `HandleEvent`ing can proceed from here, keeping in mind that `HandleEvent` will not have a valid override if the event being handled is modded (all of the events provided by this library _are_, just to state it explicitly) and if the base class doesn't already implement it `virtual`ly (`IPart` definitely won't).
@@ -103,7 +103,7 @@ namespace XRL.World.Parts
 ```
 An exact copy of this file is available in this mod's `Examples` directory.
 
-### Attaching the Part
+### Attaching Our Part
 Merging this part into one or a couple of some base objects makes sense, so that as many "things" as possible are capable of performing this action if they otherwise meet the conditions we laid out.
 
 Most objects don't have an `IdentifyLevel` greater than `0`, and, while the number of objects that _do_ jumps significantly by comparison when you consider only the subset that are _creatures_, it's still scarce even then.
@@ -143,4 +143,110 @@ Once you've got our hypothetical mod "installed", fire up a run, whether new or 
 
 ## Display-Only Items
 
-WIP
+Say you've got some trade-pertinent information that a part you've added contains, and you want to be able to show that information inside the trade window. That's where a "display-only" item comes in.
+
+Display-only items are mostly like other items with a couple of caveats, they:
+- Will respond to `lmb` by opening the vendor action menu.
+- Will respond to `rmb` by opening the vendor action menu.
+- Will respond to `space`, while highlighted, by opening the vendor action menu.
+- Will respond to `click`+`drag` by remaining at "0 included in trade".
+- Will not increment the number "included in trade".
+- Will not display a price on the right of their trade line.
+- Will obliterate them selves when trade ends, or if a turn tick occurs while they exists.
+
+Like a regular item, though, they'll show thier "look" when hovered over long enough, and can be the target of vendor actions.
+
+### Making A Display-Only Item 
+
+The first step to making a display-only item is to create a new blueprint that inherits from `UD_TradeUI_DisplayItem`. We're going to make an item that shows the player's current trade performance with the trader. 
+
+Trade performance is the multiplier used to alter the buy/sell price on the basis of ego score and faction rep. When an item is in the trader's inventory, its value gets divided by this number. When it's in the player's inventory, it gets multiplied instead.
+
+`Items.xml`
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  
+  <object Name="Our_TradePerformance_Display" Inherits="UD_TradeUI_DisplayItem">
+  <part Name="Physics" Category="A+++ VIP Member Status" />
+    <part Name="Render" DisplayName="Loyalty Card" TileColor="&amp;Y" DetailColor="W" Tile="Items/sw_credit_wedge.bmp" />
+    <part Name="Description" Short="There's no higher virtue than fealty, except for savings savings savings!" />
+    <part Name="Our_TradePerformance_DisplayPart" />
+  </object>
+  
+</objects>
+```
+
+We've pre-attached a part we're yet to make that'll handle showing the display information we want to show.
+
+There are two more main steps:
+
+1. Write `Our_TradePerformance_DisplayPart` which will handle filling out the dynamic information we want (trade performance score)
+2. Write a part for the trader that will create our new display-only item when we trade with them.
+
+### Making Our Trade Performance Display Part
+
+Trade performance can be retreived by calling `GetTradePerformanceEvent.GetFor(The.Player, Trader)` which should make this really straight forward.
+
+We want to do two things with our display-only item. We want a summary of the information to show up in the display name for the item's TradeLine, and we want a little _more_ detail instead in the short description when out item is looked at.
+
+One of the patches that [UnderDoug's Modding Toolbox](https://github.com/UnderDoug/UD_Modding_Toolbox/), a dependency of this mod, includes to `TradeLine.setData` makes use of the base game's `GetDisplayNameEvent` in place of `GameObject.DisplayName` to include a `Context` argument. This allows us to be more precise with which components of a display name will show up at different points.
+
+Below is a simple part that will retreive the information we want and put it in the appropriate places:
+
+`Our_TradePerformance_DisplayPart.cs`
+```cs
+using System;
+using Qud.UI;
+
+namespace XRL.World.Parts
+{
+    [Serializable]
+    public class Our_TradePerformance_DisplayPart : IPart
+    {
+        public override bool CanGenerateStacked()
+        {
+            return false;
+        }
+        public override bool AllowStaticRegistration()
+        {
+            return true;
+        }
+        public override bool WantEvent(int ID, int Cascade)
+        {
+            return base.WantEvent(ID, Cascade)
+                || ID == GetDisplayNameEvent.ID
+                || ID == GetShortDescriptionEvent.ID;
+        }
+        public override bool HandleEvent(GetDisplayNameEvent E)
+        {
+            if (ParentObject.InInventory is GameObject vendor
+                && E.Context == nameof(TradeLine))
+            {
+                double performance = GetTradePerformanceEvent.GetFor(The.Player, vendor);
+                string membershipRating = Math.Round(performance * 100, 0).ToString().Color("W");
+                E.AddTag($" - {membershipRating}".Color("y"));
+            }
+            return base.HandleEvent(E);
+        }
+        public override bool HandleEvent(GetShortDescriptionEvent E)
+        {
+            if (ParentObject.InInventory is GameObject vendor)
+            {
+                double performance = GetTradePerformanceEvent.GetFor(The.Player, vendor);
+                string membershipRating = Math.Round(performance * 100, 0).ToString().Color("W");
+                string membershipMessage = "=object.T's= {{Y|A+}}{{W|+}}{{M|+}} {{Y|VIP}} {{C|Member Status}} with =subject.t= is " + membershipRating;
+                E.Postfix.AppendLine()
+                    .Append(GameText.VariableReplace(membershipMessage, vendor, The.Player));
+
+                if (vendor.IsPlayerLed())
+                {
+                    E.Postfix.AppendLine().AppendLine()
+                        .Append("We're {{M|Besties!}}");
+                }
+            }
+            return base.HandleEvent(E);
+        }
+    }
+}
+```
