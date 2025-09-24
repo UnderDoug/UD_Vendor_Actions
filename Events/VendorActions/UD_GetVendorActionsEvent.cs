@@ -12,8 +12,9 @@ using UD_Vendor_Actions.Harmony;
 namespace UD_Vendor_Actions
 {
     /// <summary>
-    /// This class is analogous to the base game's <see cref="GetInventoryActionsEvent"/> and serves nearly the exact same function, extended to traders (vendors).</summary>
-    /// <remarks>Just like <see cref="GetInventoryActionsEvent"/> for inventory actions, this class is responsible for assigning values to any new <see cref="UD_VendorAction"/> entries being collected, and providing a somewhat curated list of them to <see cref="UD_VendorAction.ShowVendorActionMenu"/>.</remarks>
+    /// A modded analogue to the base game's <see cref="GetInventoryActionsEvent"/> and serves nearly the exact same function, extended to traders (vendors).</summary>
+    /// <remarks>This class is responsible for assigning values to any new <see cref="UD_VendorAction"/> entries being collected, and providing a somewhat curated list of them to <see cref="UD_VendorAction.ShowVendorActionMenu"/>.<br/><br/>
+    /// A class can implement <see cref="I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="I_UD_VendorActionEvent{T}"/> family of modded events.</remarks>
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
     public class UD_GetVendorActionsEvent : I_UD_VendorActionEvent<UD_GetVendorActionsEvent>
     {

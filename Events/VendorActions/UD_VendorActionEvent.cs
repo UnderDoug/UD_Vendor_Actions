@@ -6,8 +6,10 @@ using UD_Vendor_Actions.Harmony;
 namespace UD_Vendor_Actions
 {
     /// <summary>
-    /// 
+    /// A modded analogue to the base game's <see cref="InventoryActionEvent"/> and serves nearly the exact same function, extended to traders (vendors).
     /// </summary>
+    /// <remarks>This class is responsible for providing the opportunity for various <see cref="IPart"/>s to perform custom behaviour in response to a selected <see cref="UD_VendorAction"/>.<br/><br/>
+    /// A class can implement <see cref="I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="I_UD_VendorActionEvent{T}"/> family of modded events.</remarks>
     [GameEvent(Cascade = CASCADE_NONE, Cache = Cache.Pool)]
     public class UD_VendorActionEvent : I_UD_VendorActionEvent<UD_VendorActionEvent>
     {

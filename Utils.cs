@@ -21,6 +21,14 @@ namespace UD_Vendor_Actions
 
         public static ModInfo ThisMod => ModManager.GetMod("UD_Vendor_Actions");
 
+        /// <summary>
+        /// Iterates over types decorated with the passed <paramref name="Attribute"/> and attempts to add it to the passed <paramref name="Object"/> as an <see cref="IPart"/> if it doesn't already have that part attached.
+        /// </summary>
+        /// <remarks>
+        /// The intended subject of the <paramref name="Attribute"/> passed to this method is an <see cref="IPart"/> or derivative thereof.
+        /// </remarks>
+        /// <param name="Object">The object to which the iterated <see cref="IPart"/> will be attached, if not already present.</param>
+        /// <param name="Attribute">The <see cref="Attribute"/> derivative by which a <see cref="Type"/> is included or not for iteration over.</param>
         public static void ApplyVendorActionHandlerPartsFromAttribute(GameObject Object, Type Attribute)
         {
             if (Object  == null || Attribute == null)

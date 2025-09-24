@@ -1,7 +1,16 @@
 ﻿using XRL.World;
+using XRL.UI;
+
+using UD_Vendor_Actions.Harmony;
 
 namespace UD_Vendor_Actions
 {
+    /// <summary>
+    /// A modded sibling event to <see cref="StartTradeEvent"/>, that is called by <see cref="TradeUI_Patches.ShowTradeScreen_SendEvent_Postfix"/>, a patch of <see cref="TradeUI.ShowTradeScreen"/>.
+    /// </summary>
+    /// <remarks>
+    /// If you want to handle this event, ensure your handling part implements <see cref="IModEventHandler{StartTradeEvent}"/>, <see langword="where"/> T is <see cref="StartTradeEvent"/>.
+    /// </remarks>
     [GameEvent(Cascade = CASCADE_INVENTORY, Cache = Cache.Pool)]
     public class UD_EndTradeEvent : ModSingletonEvent<UD_EndTradeEvent>
     {

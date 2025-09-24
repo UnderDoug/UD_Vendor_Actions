@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Mods</name>
+    </assembly>
+    <members>
+        <member name="T:UD_Vendor_Actions.AlwaysHandlesItem_UD_VendorActionsAttribute">
+            <summary>
+            An <see cref="T:XRL.World.IPart"/> designed for Items that should always be available to offer one or more <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> to <see cref="T:UD_Vendor_Actions.UD_GetVendorActionsEvent"/>, including if this mod is enabled mid-save.
+            </summary>
+            <remarks>
+            There are currently no good examples, however if this part would be attached to the base "Item" blueprint then it should be decorated with this attribute.
+            </remarks>
+        </member>
+        <member name="T:UD_Vendor_Actions.AlwaysHandlesVendor_UD_VendorActionsAttribute">
+            <summary>
+            An <see cref="T:XRL.World.IPart"/> designed for Vendors that should always be available to offer one or more <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> to <see cref="T:UD_Vendor_Actions.UD_GetVendorActionsEvent"/>, including if this mod is enabled mid-save.
+            </summary>
+            <remarks>
+            A good example of one such part is <see cref="T:XRL.World.Parts.UD_VendorActionHandler"/>, which was designed to be attached to the base "Creature" blueprint.
+            </remarks>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_EndTradeEvent">
+            <summary>
+            A modded sibling event to <see cref="T:XRL.World.StartTradeEvent"/>, that is called by <see cref="M:UD_Vendor_Actions.Harmony.TradeUI_Patches.ShowTradeScreen_SendEvent_Postfix(XRL.World.GameObject@)"/>, a patch of <see cref="M:XRL.UI.TradeUI.ShowTradeScreen(XRL.World.GameObject,System.Single,XRL.UI.TradeUI.TradeScreenMode)"/>.
+            </summary>
+            <remarks>
+            If you want to handle this event, ensure your handling part implements <see cref="T:XRL.World.IModEventHandler`1"/>, <see langword="where"/> T is <see cref="T:XRL.World.StartTradeEvent"/>.
+            </remarks>
+        </member>
+        <member name="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1">
+            <summary>
+            A base <see cref="T:XRL.World.ModPooledEvent`1"/> for a family of <see cref="T:UD_Vendor_Actions.UD_VendorAction"/>-focused events to inherit common members from.
+            </summary>
+            <remarks>
+            A class can implement <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> family of modded events.
+            </remarks>
+            <typeparam name="T">A class inheriting from <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/>, with a default parameterless constructor.</typeparam>
+        </member>
+        <member name="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.Vendor">
+            <summary>The entity with whom the player is or was "engaged in trade".</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.Item">
+            <summary>The object around which a given <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> is centred.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.Command">
+            <summary>See <see cref="F:UD_Vendor_Actions.UD_VendorAction.Command"/>: <inheritdoc cref="F:UD_Vendor_Actions.UD_VendorAction.Command"/>.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.DramsCost">
+            <summary>See <see cref="F:UD_Vendor_Actions.UD_VendorAction.DramsCost"/>: <inheritdoc cref="F:UD_Vendor_Actions.UD_VendorAction.DramsCost"/>.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.TradeLine">
+            <summary>The <see cref="T:Qud.UI.TradeLine"/> instance from which the event was fired.</summary>
+        </member>
+        <member name="M:UD_Vendor_Actions.I_UD_VendorActionEvent`1.SendAfter(XRL.World.GameObject,`0)">
+            <summary>Handles sending the "after" subset of events in this event family.</summary>
+            <remarks>Forms part of the near 1:1 copy this code is of the decompiled base game's <see cref="T:XRL.World.InventoryActionEvent"/> family of <see cref="T:XRL.World.MinEvent"/>.</remarks>
+            <param name="Object">The object that will call <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/>.</param>
+            <param name="Source">The parent <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> that called this method.</param>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_AfterVendorActionEvent">
+            <summary>
+            Signals that a <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> has successfully resolved.
+            </summary>
+            <remarks>
+            A class can implement <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> family of modded events.
+            </remarks>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_GetVendorActionsEvent">
+            <summary>
+            A modded analogue to the base game's <see cref="T:XRL.World.GetInventoryActionsEvent"/> and serves nearly the exact same function, extended to traders (vendors).</summary>
+            <remarks>This class is responsible for assigning values to any new <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> entries being collected, and providing a somewhat curated list of them to <see cref="M:UD_Vendor_Actions.UD_VendorAction.ShowVendorActionMenu(System.Collections.Generic.Dictionary{System.String,UD_Vendor_Actions.UD_VendorAction},XRL.World.GameObject,System.String,System.Collections.Generic.IComparer{UD_Vendor_Actions.UD_VendorAction},System.Boolean)"/>.<br/><br/>
+            A class can implement <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> family of modded events.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions">
+            <summary>The <see cref="F:UD_Vendor_Actions.UD_VendorAction.Name"/> keyed actions table into which vendor actions are collected and curated before being supplied to <see cref="M:UD_Vendor_Actions.UD_VendorAction.ShowVendorActionMenu(System.Collections.Generic.Dictionary{System.String,UD_Vendor_Actions.UD_VendorAction},XRL.World.GameObject,System.String,System.Collections.Generic.IComparer{UD_Vendor_Actions.UD_VendorAction},System.Boolean)"/>.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.IncludeModernTradeOptions">
+            <summary>Primarily used by <see cref="T:XRL.World.Parts.UD_VendorActionHandler"/> to include or exclude the "Add to trade" vendor action.</summary>
+            <remarks>This field is set <see langword="true"/> when <see cref="M:UD_Vendor_Actions.UD_GetVendorActionsEvent.Send(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,System.Collections.Generic.Dictionary{System.String,UD_Vendor_Actions.UD_VendorAction},System.Boolean)"/> is called by the patched <see cref="M:Qud.UI.TradeLine.HandleVendorActions"/> to mirror the base game's implementation doing so.<br/><br/>
+            While currently redundant, its inclusion is to ensure it's easy to implement in the event that the base game's handling of vendor actions implements it.</remarks>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_GetVendorActionsEvent.Send(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,System.Collections.Generic.Dictionary{System.String,UD_Vendor_Actions.UD_VendorAction},System.Boolean)">
+            <summary>
+            Contains the logic for determining which sources of vendor actions should be given the opportunity to provide them, and calls <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> on those sources when applicable.
+            </summary>
+            <param name="TradeLine">The <see cref="T:Qud.UI.TradeLine"/> instance from which this method was called.</param>
+            <param name="Vendor">The vendor from whom vendor actions should be collected, if available.</param>
+            <param name="Item">The item from which vendor actions should be collected, if available.</param>
+            <param name="Actions">A pre-initialized actions table into which vendor actions can be collected.</param>
+            <param name="IncludeModernTradeOptions">This is an ultimately unused parameter (always passed <see langword="true"/>).<br/><remarks>It is the condition by which the "Add to trade" vendor action is included, both base game and by this mod.</remarks></param>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_GetVendorActionsEvent.AddAction(System.String,System.String,System.String,System.String,System.Char,System.Int32,System.Int32,System.Nullable{System.Int32},System.Boolean,System.Boolean,System.Boolean,XRL.World.GameObject,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            The primary means by which a <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> should be added to <see cref="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions"/> that <see cref="T:UD_Vendor_Actions.UD_GetVendorActionsEvent"/> is designed to accumulate. It has some boilerplate code that ensures an action is configured correctly if certain arguments passed to it would conflict.
+            </summary>
+            <param name="Name">The name of the action, and the Key for the action's entry in <see cref="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions"/>.</param>
+            <param name="Display">How the action will be displayed in the resultant menu, with some caveats.</param>
+            <param name="Command">The command sent in conjunction with an <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> for handling parts to check that they are responding to the correct action.</param>
+            <param name="PreferToHighlight">A substring of <see cref="F:UD_Vendor_Actions.UD_VendorAction.Display"/> which can be optionally specified, and the resultant menu will try first to find an appropriate character to replace with the <see cref="F:UD_Vendor_Actions.UD_VendorAction.Key"/>.</param>
+            <param name="Key">The hotkey for the action in the resultant menu. Where possible, it'll be highlighted in the <see cref="F:UD_Vendor_Actions.UD_VendorAction.Display"/> string; otherwise, it will be to the left in typical "[h] hotkey" style.</param>
+            <param name="Default">Used to determine which is the "selected by default" option in the resultant menu. Higher numbers supersede.</param>
+            <param name="Priority">How high up the list an action should be, where higher numbers indicate a higher position in the list</param>
+            <param name="DramsCost">A "simple" way of defining a drams cost that can be retrieved when an <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> is fired.</param>
+            <param name="FireOnVendor">Indicates whether to send the vendor action to the <see cref="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.Vendor"/> for handling.</param>
+            <param name="FireOnItem">Indicates whether to send the vendor action to the <see cref="F:UD_Vendor_Actions.I_UD_VendorActionEvent`1.Item"/> for handling.</param>
+            <param name="FireOnPlayer">Indicates whether to send the vendor action to the <see cref="P:XRL.The.Player"/> for handling.</param>
+            <param name="FireOn">An arbitrary object to send the vendor action to for handling before any indicated objects get the opportunity to handle it.</param>
+            <param name="Override">Indicates whether this vendor action should replace one of the same <paramref name="Name"/> if found in <see cref="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions"/>.</param>
+            <param name="ProcessAfterAwait">Indicates if the action should be processed once control has left <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/>'s <see langword="await"/> statement.</param>
+            <param name="ProcessSecondAfterAwait">Indicates if the action's second processing, if <paramref name="Staggered"/>, should be processed once control has left <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/>'s <see langword="await"/> statement.</param>
+            <param name="ClearAndSetUpTradeUI">Indicates whether or not the active instance of <see cref="T:Qud.UI.TradeScreen"/> should call <see cref="M:Qud.UI.TradeScreen.ClearAndSetupTradeUI"/> after the action has been processed.</param>
+            <param name="Staggered">Indicates whether or not an action should call <see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> twice as part of the action being resolved.</param>
+            <param name="CloseTradeBeforeProcessingSecond">If <paramref name="Staggered"/>, indicates that the trade window should be closed before <see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> is called the second time. See <see cref="F:UD_Vendor_Actions.UD_VendorAction.Staggered"/> for important information.</param>
+            <param name="CloseTradeAfterProcessing">Indicates that the trade window should be closed at the end of <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> a given action being resolved. See <see cref="F:UD_Vendor_Actions.UD_VendorAction.Staggered"/> for important information.</param>
+            <returns><see langword="true"/> if the action was added to <see cref="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions"/>;<br/>
+            <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_OwnerAfterVendorActionEvent">
+            <summary>
+            Signals that a <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> has successfully resolved, sent to the Owner supplied to <see cref="M:UD_Vendor_Actions.UD_VendorActionEvent.Check(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.String,System.Boolean@,System.Boolean@,System.Nullable{System.Int32},System.Boolean,System.Boolean)"/>.
+            </summary>
+            <remarks>
+            A class can implement <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> family of modded events.
+            </remarks>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_VendorActionEvent">
+            <summary>
+            A modded analogue to the base game's <see cref="T:XRL.World.InventoryActionEvent"/> and serves nearly the exact same function, extended to traders (vendors).
+            </summary>
+            <remarks>This class is responsible for providing the opportunity for various <see cref="T:XRL.World.IPart"/>s to perform custom behaviour in response to a selected <see cref="T:UD_Vendor_Actions.UD_VendorAction"/>.<br/><br/>
+            A class can implement <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> family of modded events.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorActionEvent.Staggered">
+            <summary>Indicates that this event will be sent twice.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorActionEvent.Second">
+            <summary>Indicates whether this is the second time the event has been sent.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorActionEvent.CloseTradeRequested">
+            <summary>Indicates that the trade window should be closed after the conclusion of <see cref="M:UD_Vendor_Actions.UD_VendorActionEvent.Check(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.String,System.Boolean@,System.Boolean@,System.Nullable{System.Int32},System.Boolean,System.Boolean)"/>.</summary>
+            <remarks><see cref="M:UD_Vendor_Actions.UD_VendorActionEvent.RequestTradeClose"/> can be used to set this field.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorActionEvent.CancelSecondRequested">
+            <summary>If <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Staggered"/> and not <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Second"/>, indicates that the event is no longer needed a second time.</summary>
+            <remarks><see cref="M:UD_Vendor_Actions.UD_VendorActionEvent.RequestCancelSecond"/> can be used to set this field.</remarks>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorActionEvent.Check(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.String,System.Boolean@,System.Boolean@,System.Nullable{System.Int32},System.Boolean,System.Boolean)">
+            <summary>
+            Calls <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> on the supplied <paramref name="Handler"/>, and <see langword="out"/>s for <see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> whether the trade window should be closed and whether, if <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Staggered"/>, the second call should be cancelled.
+            </summary>
+            <remarks>
+            This method is also responsible for calling <see cref="M:UD_Vendor_Actions.I_UD_VendorActionEvent`1.SendAfter(XRL.World.GameObject,`0)"/> for <see cref="T:UD_Vendor_Actions.UD_AfterVendorActionEvent"/>, and <see cref="T:UD_Vendor_Actions.UD_OwnerAfterVendorActionEvent"/>, if handling is successful.
+            </remarks>
+            <param name="TradeLine">The <see cref="T:Qud.UI.TradeLine"/> instance from which the method was called.</param>
+            <param name="Handler">The entity that will call <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/>, handling the event if it <see cref="M:XRL.World.GameObject.WantEvent(System.Int32,System.Int32)"/>.<br/>Typically one of the <paramref name="Vendor"/>, the <paramref name="Item"/>, or <see cref="P:XRL.The.Player"/>, but potentially anything, given <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOn"/>, if supplied, is always the first <paramref name="Handler"/>.</param>
+            <param name="Vendor">The vendor with whom the player is currently "engaged in trade". This could be a merchant, or a companion, or even a container.</param>
+            <param name="Item">The item for which the vendor actions are being collected.</param>
+            <param name="Owner">This is typically the <paramref name="Item"/>'s <see cref="P:XRL.World.GameObject.InInventory"/>.</param>
+            <param name="Command">An identifier for the action being sent for handling.</param>
+            <param name="CloseTrade">Indicates that the trade window should be closed after the conclusion of this method.</param>
+            <param name="CancelSecond">If <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Staggered"/> and not <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Second"/>, indicates that the event is no longer needed a second time.</param>
+            <param name="DramsCost">A "simple" way of defining a drams cost that can be retrieved when this event is being handled. Largely unused.</param>
+            <param name="Staggered">Indicates that this event will be sent twice.</param>
+            <param name="Second">Indicates whether this is the second time the event has been sent.</param>
+            <returns><see langword="true"/> if <paramref name="Handler"/> successfully <see cref="M:XRL.World.GameObject.Validate(XRL.World.GameObject@)"/>, <see cref="M:XRL.World.GameObject.WantEvent(System.Int32,System.Int32)"/>, and <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> returns <see langword="true"/>;<br/>
+            <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorActionEvent.RequestTradeClose">
+            <summary></summary>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorActionEvent.IsCloseTradeRequested">
+            <summary></summary>
+            <returns></returns>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorActionEvent.RequestCancelSecond">
+            <summary></summary>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorActionEvent.IsCancelSecondRequested">
+            <summary></summary>
+            <returns></returns>
+        </member>
+        <member name="T:UD_Vendor_Actions.I_UD_VendorActionEventHandler">
+            <summary>
+            Contracts a class as capable of handling the following modded events:
+            <list type="bullet">
+            <item><see cref="T:UD_Vendor_Actions.UD_GetVendorActionsEvent"/></item>
+            <item><see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/></item>
+            <item><see cref="T:UD_Vendor_Actions.UD_AfterVendorActionEvent"/></item>
+            <item><see cref="T:UD_Vendor_Actions.UD_OwnerAfterVendorActionEvent"/></item>
+            </list>
+            </summary>
+        </member>
+        <member name="T:UD_Vendor_Actions.UD_VendorAction">
+            <summary>
+            This class is analogous to the base game's <see cref="T:XRL.World.InventoryAction"/> and serves nearly the exact same function, extended to a given <see cref="T:XRL.World.GameObject"/> with whom the player is "engaged in trade".
+            </summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.CurrentAction">
+            <summary>The action currently being processed. Typically only assigned while <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> is being dispatched by the given action and handled.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.FirstProcessed">
+            <summary>Indicates whether this action has been processed once already in the case of a <see cref="F:UD_Vendor_Actions.UD_VendorAction.Staggered"/> action.</summary>
+            <remarks>While <see langword="private"/>, <see cref="F:UD_Vendor_Actions.UD_VendorActionEvent.Second"/> can be used during <see cref="M:XRL.World.IModEventHandler`1.HandleEvent(`0)"/> to check for which firing a given handling is occuring for.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Name">
+            <summary>The name of the action, and the Key for the action's entry in <see cref="F:UD_Vendor_Actions.UD_GetVendorActionsEvent.Actions"/>.</summary>
+            <remarks>This is also the means by which actions can be overridden during the collection event if there's functionality a prospective modder wants to perform instead.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Key">
+            <summary>The hotkey for the action in the resultant menu.</summary>
+            <remarks>Where possible, it'll be highlighted in the <see cref="F:UD_Vendor_Actions.UD_VendorAction.Display"/> string; otherwise, it will be to the left in typical "[h] hotkey" style.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Display">
+            <summary>How the action will be displayed in the resultant menu, with some caveats.</summary>
+            <remarks>"Identify" with 'i' as the <see cref="F:UD_Vendor_Actions.UD_VendorAction.Key"/> will display as "identify" due to the first instance of "I" being replaced with the hotkey, which is lower case, and highlighted.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Command">
+            <summary>The command sent in conjunction with an <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> for handling parts to check that they are responding to the correct action.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.PreferToHighlight">
+            <summary>A substring of <see cref="F:UD_Vendor_Actions.UD_VendorAction.Display"/> which can be optionally specified, and the resultant menu will try first to find an appropriate character to replace with the <see cref="F:UD_Vendor_Actions.UD_VendorAction.Key"/>.</summary>
+            <remarks>Tinkering Bytes uses this field for tinkering modifications:<br/>
+            When getting vendor actions for data disks, if the disk is for an item modification, the action has "mod an item with tinkering" assigned to <see cref="F:UD_Vendor_Actions.UD_VendorAction.Display"/>, and 'T' assigned to <see cref="F:UD_Vendor_Actions.UD_VendorAction.Key"/>.<br/>
+            This would show up in the menu as "mod an iTem with tinkering" if not for setting PreferToHighlight to "tinkering".<br/>
+            Set so, the result is the menu instead displaying "mod an item with Tinkering", where the "T" in "Tinkering" is the highlighted hotkey.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Default">
+            <summary>Used to determine which is the "selected by default" option in the resultant menu. Higher numbers supersede.</summary>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Priority">
+            <summary>How high up the list an action should be, where higher numbers indicate a higher position in the list.</summary>
+            <remarks>"[l]ook" is Priority 10.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.DramsCost">
+            <summary>A "simple" way of defining a drams cost that can be retrieved when an <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/> is fired.</summary>
+            <remarks>This started as a way to quickly test passing arguments to the event, but removing it seemed pointless.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.FireOnVendor">
+            <summary><see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnVendor"/>, <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnItem"/> and <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnPlayer"/>, are used to determine which entity the action is supposed to <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> it.</summary>
+            <remarks><see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> will always fire first on <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOn"/> if assigned a non-<see langword="null"/> value, followed by, if their respective field is <see langword="true"/>, the vendor, the item, and the player, in that order.<br/><br/>
+            If multiple of these fieldss are set <see langword="true"/>, then each indicated entity will get the opportunity to handle the event unless one of the prior handling entities returns false during their handling.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.FireOnItem">
+            <summary><see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnVendor"/>, <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnItem"/> and <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnPlayer"/>, are used to determine which entity the action is supposed to <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> it.</summary>
+            <remarks><see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> will always fire first on <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOn"/> if assigned a non-<see langword="null"/> value, followed by, if their respective field is <see langword="true"/>, the vendor, the item, and the player, in that order.<br/><br/>
+            If multiple of these fieldss are set <see langword="true"/>, then each indicated entity will get the opportunity to handle the event unless one of the prior handling entities returns false during their handling.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.FireOnPlayer">
+            <summary><see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnVendor"/>, <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnItem"/> and <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOnPlayer"/>, are used to determine which entity the action is supposed to <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> it.</summary>
+            <remarks><see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> will always fire first on <see cref="F:UD_Vendor_Actions.UD_VendorAction.FireOn"/> if assigned a non-<see langword="null"/> value, followed by, if their respective field is <see langword="true"/>, the vendor, the item, and the player, in that order.<br/><br/>
+            If multiple of these fieldss are set <see langword="true"/>, then each indicated entity will get the opportunity to handle the event unless one of the prior handling entities returns false during their handling.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.FireOn">
+            <summary>An arbitrary entity that the action wants to <see cref="!:IModEventHandler&lt;I_UD_VendorActionEvent&lt;T&gt;&gt;.HandleEvent(I_UD_VendorActionEvent&lt;T&gt;)"/> an <see cref="T:UD_Vendor_Actions.I_UD_VendorActionEvent`1"/>. If assigned, this entity is always fired on first.</summary>
+            <remarks>It needn't otherwise be part of the interaction at all, so steps should be taken to ensure that it's a valid target for handling the event (for example, not a cached object).<br/><br/>
+            A use case for this is having whoever "owns" the given item handle <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> by assigning E.Item.InInventory to it during <see cref="T:UD_Vendor_Actions.UD_GetVendorActionsEvent"/>.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.ProcessAfterAwait">
+            <summary>The main method patched to divert to this mod's implementation of vendor actions, <see cref="M:Qud.UI.TradeLine.HandleVendorActions"/>, is <see langword="async"/> and calls an <see langword="await"/> method via <see cref="M:XRL.UI.Framework.APIDispatch.RunAndWaitAsync(System.Action)"/>.</summary>
+            <remarks>This is unfamiliar territory for me, so I've tread carefully and tried to mimic it as much as possible. Some of the base game's handling of vendor actions occurs once the <see langword="await"/> has finished, so this field, set to <see langword="true"/>, indicates that the action wants to be processed/handled after the <see langword="await"/> has finished.<br/><br/>
+            I believe that "doing an <see langword="await"/>" inside an already "doing" <see langword="await"/> is a great way to see your desktop, so I recommend setting this to <see langword="true"/> if your custom action requires handling that, itself, wants to <see langword="await"/>.<br/><br/>
+            The base game's "Add to trade" action would require this field be set <see langword="true"/>, as it normally happens after <see cref="M:Qud.UI.TradeLine.HandleVendorActions"/> has run.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.ProcessSecondAfterAwait">
+            <summary>Indicates that, for an action that requires a second firing of <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/>, irrespective of the first firing occurring during <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/>'s <see langword="await"/> or after it, the second one should occur once <see langword="await"/> has finished.</summary>
+            <remarks>Any action that fires its first time after will always fire its second time after too, if a second firing is flagged for.<br/><br/>
+            See <see cref="F:UD_Vendor_Actions.UD_VendorAction.ProcessAfterAwait"/> for more information on <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/>, its <see langword="await"/>, and how vendor actions interract with it.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.ClearAndSetUpTradeUI">
+            <summary>Indicates whether or not the active instance of <see cref="T:Qud.UI.TradeScreen"/> should call <see cref="M:Qud.UI.TradeScreen.ClearAndSetupTradeUI"/> after the action has been processed.</summary>
+            <remarks>Actions that affect the contents of the trade UI ought to assign this <see langword="true"/>, so that each handling of an action gets a refreshed UI with any changes reflected.<br/><br/>
+            The base game's "Identify" and "Repair" actions would require this field be set <see langword="true"/>.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.Staggered">
+            <summary>Indicates whether or not an action should call <see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> twice as part of the action being resolved.</summary>
+            <remarks>The main purpose of this field is to allow for the closure of the trade window "during" the "handling" of vendor actions, without the UI being manipulated while <see cref="M:XRL.World.IModEventHandler`1.HandleEvent(`0)"/> is resolving.<br/><br/>
+            Tinkering Bytes requires this field be set <see langword="true"/> for UD_VendorDisassembly:<br/>
+            The "invoice" for disassembly is calculated and presented to the player during <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/>'s <see langword="await"/>.<br/>
+            - If they accept, the trade window is closed and disassembly begins as a "joint" <see cref="T:XRL.OngoingAction"/> between the player and the trader.<br/>
+            - If they don't (or can't) accept the invoice, then closure of the trade window and the second firing are cancelled.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.CloseTradeBeforeProcessingSecond">
+            <summary>If <see cref="F:UD_Vendor_Actions.UD_VendorAction.Staggered"/>, indicates that the trade window should be closed before <see cref="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)"/> is called the second time.</summary>
+            <remarks>It is recommended (by LibrarianMage/Books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="T:XRL.World.MinEvent"/> are being resolved.<br/>
+            It's my recommendation that this, or <see cref="F:UD_Vendor_Actions.UD_VendorAction.CloseTradeAfterProcessing"/>, be the only means by which the trade UI is manipulated when dealing with vendor actions.</remarks>
+        </member>
+        <member name="F:UD_Vendor_Actions.UD_VendorAction.CloseTradeAfterProcessing">
+            <summary>Indicates that the trade window should be closed at the end of a given action being resolved.</summary>
+            <remarks>If the chosen action has this field set to <see langword="true"/>, the trade window will be closed once the action is processed, whether successfully handled or not.<br/><br/>
+            It is recommended (by LibrarianMage/Books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="T:XRL.World.MinEvent"/> are being resolved.<br/>
+            It's my recommendation that this, or <see cref="F:UD_Vendor_Actions.UD_VendorAction.CloseTradeAfterProcessing"/>, be the only means by which the trade UI is manipulated when dealing with vendor actions.</remarks>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorAction.Process(Qud.UI.TradeLine,XRL.World.GameObject,XRL.World.GameObject,XRL.World.GameObject,System.Boolean@)">
+            <summary>
+            Contains the logic for determining which entities should have <see cref="T:UD_Vendor_Actions.UD_VendorActionEvent"/> fired on them, setting up for staggered firing if flagged for, and telling <see cref="M:UD_Vendor_Actions.Harmony.TradeLine_Patches.HandleVendorActions(XRL.World.GameObject,Qud.UI.TradeLine)"/> whether the trade UI should be closed between instances of action processing or after the action has, overall, been resolved.
+            </summary>
+            <param name="TradeLine">The <see cref="T:Qud.UI.TradeLine"/> instance for which the vendor actions are being resolved.</param>
+            <param name="Vendor">The vendor with whom the player is currently "engaged in trade". This could be a merchant, or a companion, or even a container.</param>
+            <param name="Item">The item for which the vendor actions are being collected.</param>
+            <param name="Owner">This is typically the <paramref name="Item"/>'s <see cref="P:XRL.World.GameObject.InInventory"/>.</param>
+            <param name="CloseTrade">Indicates whether or not <see cref="M:Qud.UI.TradeScreen.Cancel"/> should be called once control leaves the method (which is after any events have been resolved).</param>
+            <returns><see langword="true"/> if none of the handling entities returns <see langword="false"/> after their <see cref="M:XRL.World.IModEventHandler`1.HandleEvent(`0)"/>;<br/>
+            <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorAction.ShowVendorActionMenu(System.Collections.Generic.Dictionary{System.String,UD_Vendor_Actions.UD_VendorAction},XRL.World.GameObject,System.String,System.Collections.Generic.IComparer{UD_Vendor_Actions.UD_VendorAction},System.Boolean)">
+            <summary>This method shows a UI element with a processed list of vendor actions that can be selected from for handling by various different involved entities.</summary>
+            <remarks>The code for this method was taken largely 1:1 from the decompiled base game's <see cref="M:Qud.API.EquipmentAPI.ShowInventoryActionMenu(System.Collections.Generic.Dictionary{System.String,XRL.World.InventoryAction},XRL.World.GameObject,XRL.World.GameObject,System.Boolean,System.Boolean,System.String,System.Collections.Generic.IComparer{XRL.World.InventoryAction},System.Boolean)"/>, altered only slightly to account for differences between the two systems.</remarks>
+            <param name="ActionTable">An uprocessed dictionary containing <see cref="F:UD_Vendor_Actions.UD_VendorAction.Name"/> keyed vendor actions.</param>
+            <param name="Item">The item for which the vendor actions are being listed and picked.</param>
+            <param name="Intro">A short blurb appearing before the list of vendor actions.</param>
+            <param name="Comparer">The <see cref="T:System.Collections.Generic.IComparer`1"/> by which the final list will be sorted.</param>
+            <param name="MouseClick">Currently unimplemented. Passed true if the TradeLine showing the menu was clicked.</param>
+            <returns>The selected <see cref="T:UD_Vendor_Actions.UD_VendorAction"/> if one was picked;<br/>
+            <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="M:UD_Vendor_Actions.UD_VendorAction.ItemIsTradeUIDisplayOnly(XRL.World.GameObject)">
+            <summary>Checks the passed <paramref name="Item"/> for being "display-only".</summary>
+            <remarks>More information about "display-only" items can found on <see href="https://github.com/UnderDoug/UD_Vendor_Actions/wiki/Display‐only-items">this mod's GitHub</see></remarks>
+            <param name="Item">The item being checked.</param>
+            <returns><see langword="true"/> if the object is only for display;<br/>
+            <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="M:UD_Vendor_Actions.Utils.ApplyVendorActionHandlerPartsFromAttribute(XRL.World.GameObject,System.Type)">
+            <summary>
+            Iterates over types decorated with the passed <paramref name="Attribute"/> and attempts to add it to the passed <paramref name="Object"/> as an <see cref="T:XRL.World.IPart"/> if it doesn't already have that part attached.
+            </summary>
+            <remarks>
+            The intended subject of the <paramref name="Attribute"/> passed to this method is an <see cref="T:XRL.World.IPart"/> or derivative thereof.
+            </remarks>
+            <param name="Object">The object to which the iterated <see cref="T:XRL.World.IPart"/> will be attached, if not already present.</param>
+            <param name="Attribute">The <see cref="T:System.Attribute"/> derivative by which a <see cref="T:System.Type"/> is included or not for iteration over.</param>
+        </member>
+        <member name="T:XRL.World.Parts.UD_TradeUI_DisplayItem">
+            <summary>
+            Prevents a "display-only" pseudo-item's existence persisting longer than the duration of the trade it was created for.
+            </summary>
+            <remarks>
+            Pseudo-items by their nature aren't "real" items and shouldn't have the opportunity to be interacted with outside of the trade UI. They're an abstraction of either inforamtion relevant to trading, such as the contents of a creature's bit locker, or of a service that a trader could provide that doesn't involve an item, involves an item yet to be picked, or involves an item yet to exist.
+            </remarks>
+        </member>
+        <member name="T:XRL.World.Parts.UD_VendorActionHandler">
+            <summary>
+            Class designed to functionally restore the base game's vendor action behaviour that is otherwise skipped by the patches in this mod.
+            </summary>
+            <remarks>
+            Largely, the base game's vendor action handler methods are called directly for their respective vendor actions, and the conditions by which they're offered are, for all intents and purposes, the same.<br/><br/>
+            See <see cref="M:XRL.UI.TradeUI.ShowVendorActions(XRL.World.GameObject,XRL.World.GameObject,System.Boolean)"/> for the base game's implementation to compare.
+            </remarks>
+        </member>
+    </members>
+</doc>

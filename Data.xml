@@ -2,6 +2,8 @@
 <objects>
   <!--
   
+  DataBucket to supply UD_Vendor_Actions_ModBasedInitialiser.AdditionalSetup() with a dictionary to iterate over to add entries to FilterBarCategoryButton.categoryImageMap
+  
   Usage:
   
   <object Name="UD_PhysicsCategoryIcons" Inherits="DataBucket">
@@ -11,8 +13,7 @@
   the tag's name should be the Physics.Category, and the tag's value should be the desired tile.
   
   -->
-
   <object Name="UD_PhysicsCategoryIcons" Inherits="DataBucket">
-
   </object>
+  
 </objects>

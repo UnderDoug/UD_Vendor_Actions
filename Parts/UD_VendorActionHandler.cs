@@ -8,6 +8,13 @@ using static XRL.World.Parts.Skill.Tinkering;
 
 namespace XRL.World.Parts
 {
+    /// <summary>
+    /// Class designed to functionally restore the base game's vendor action behaviour that is otherwise skipped by the patches in this mod.
+    /// </summary>
+    /// <remarks>
+    /// Largely, the base game's vendor action handler methods are called directly for their respective vendor actions, and the conditions by which they're offered are, for all intents and purposes, the same.<br/><br/>
+    /// See <see cref="TradeUI.ShowVendorActions"/> for the base game's implementation to compare.
+    /// </remarks>
     [AlwaysHandlesVendor_UD_VendorActions]
     [Serializable]
     public class UD_VendorActionHandler : IScribedPart, I_UD_VendorActionEventHandler
@@ -40,30 +47,29 @@ namespace XRL.World.Parts
                 int vendorIdentifyLevel = GetIdentifyLevel(E.Vendor);
                 bool itemUnderstood = E.Item.Understood();
                 Tinkering_Repair vendorRepairSkill = E.Vendor.GetPart<Tinkering_Repair>();
-                int priority = 10;
-                E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: priority--);
+                E.AddAction("Look", "look", COMMAND_LOOK, Key: 'l', Priority: 10);
                 if (E.IncludeModernTradeOptions && !UD_VendorAction.ItemIsTradeUIDisplayOnly(E.Item))
                 {
-                    E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: priority--, ProcessAfterAwait: true);
+                    E.AddAction("Add to trade", "add to trade", COMMAND_ADD_TO_TRADE, Key: 't', Priority: 9, ProcessAfterAwait: true);
                 }
                 if (vendorIdentifyLevel > 0 && !itemUnderstood)
                 {
-                    E.AddAction("Identify", "identify", COMMAND_IDENTIFY, Key: 'i', Priority: priority--, ClearAndSetUpTradeUI: true);
+                    E.AddAction("Identify", "identify", COMMAND_IDENTIFY, Key: 'i', Priority: 8, ClearAndSetUpTradeUI: true);
                 }
                 if (vendorRepairSkill != null && IsRepairableEvent.Check(E.Vendor, E.Item, null, vendorRepairSkill))
                 {
-                    E.AddAction("Repair", "repair", COMMAND_REPAIR, Key: 'r', Priority: priority--);
+                    E.AddAction("Repair", "repair", COMMAND_REPAIR, Key: 'r', Priority: 7);
                 }
                 if (E.Vendor.HasSkill(nameof(Tinkering_Tinker1)) 
                     && (itemUnderstood || vendorIdentifyLevel >= E.Item.GetComplexity()) && E.Item.NeedsRecharge())
                 {
-                    E.AddAction("Recharge", "recharge", COMMAND_RECHARGE, Key: 'c', Priority: priority--, ClearAndSetUpTradeUI: true);
+                    E.AddAction("Recharge", "recharge", COMMAND_RECHARGE, Key: 'c', Priority: 6, ClearAndSetUpTradeUI: true);
                 }
                 if (E.Vendor.GetIntProperty("Librarian") != 0 
                     && E.Item.HasInventoryActionWithCommand("Read") 
                     && E.Item.InInventory == ParentObject)
                 {
-                    E.AddAction("Read", "read", COMMAND_RECHARGE, Key: 'b', Priority: priority--);
+                    E.AddAction("Read", "read", COMMAND_RECHARGE, Key: 'b', Priority: 5);
                 }
             }
             return base.HandleEvent(E);

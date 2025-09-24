@@ -1,10 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <objects>
+  <!--
   
-  <!-- Base object for appearing in a trade window but being strictly unsellable -->
+  Base object for item appearing in a trade window but being strictly unsellable
+  
+  Usage:
+  
+  <object Name="UD_BitLocker_Display" Inherits="UD_TradeUI_DisplayItem">
+    <part Name="Physics" Category="Available Bits" /> 
+    <part Name="Render" DisplayName="{{UD_bitlocker|bit locker}}" TileColor="&amp;c" DetailColor="W" Tile="Items/sw_multi_cabinet_1.bmp" />
+    <part Name="Description" Short="An assortment of half-had ideas lay prostrate in piles of have-been and could-yet-be..." />
+    <part Name="UD_BitLocker_Display" />
+    <property Name="NeverStack" Value="No stacks for me please." />
+  </object>
+  
+  The above item, if created when trade starts, will appear like a regular item.
+    - It will respond to "right-click" by opening the vendor action menu.
+    - It will respond to "left-click" by opening the vendor action menu.
+    - It will respond to [space], while highlighted, by opening the vendor action menu.
+    - It will respond to "click-and-drag" by remaining at "0 included in trade".
+    - It will not increment the number "included in trade".
+    - It will not display a price on the right of its trade line.
+    - It will obliterate itself when trade ends, or if a turn tick occurs while it exists.
+  
+  -->
   <object Name="UD_TradeUI_DisplayItem" Inherits="Item">
     <part Name="Render" DisplayName="[Display-Only Item]" RenderString="." RenderLayer="5" />
     <part Name="Physics" Weight="0" />
+    <part Name="UD_TradeUI_DisplayItem" />
     <tag Name="TradeUI_DisplayOnly"/>
     <tag Name="BaseItem" Value="*noinherit"/>
     <tag Name="ExcludeFromDynamicEncounters" />

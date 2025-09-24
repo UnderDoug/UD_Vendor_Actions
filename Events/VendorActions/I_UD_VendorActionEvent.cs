@@ -6,6 +6,9 @@ namespace UD_Vendor_Actions
     /// <summary>
     /// A base <see cref="ModPooledEvent{T}"/> for a family of <see cref="UD_VendorAction"/>-focused events to inherit common members from.
     /// </summary>
+    /// <remarks>
+    /// A class can implement <see cref="I_UD_VendorActionEventHandler"/> to enable handling of the entire <see cref="I_UD_VendorActionEvent{T}"/> family of modded events.
+    /// </remarks>
     /// <typeparam name="T">A class inheriting from <see cref="I_UD_VendorActionEvent{T}"/>, with a default parameterless constructor.</typeparam>
     [GameEvent(Base = true, Cascade = CASCADE_NONE, Cache = Cache.Pool)]
     public abstract class I_UD_VendorActionEvent<T> : ModPooledEvent<T>

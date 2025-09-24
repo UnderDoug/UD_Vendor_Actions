@@ -2,7 +2,7 @@
 <objects>
   
   <!-- This has been superceded by use of an attribute -->
-  <!-- Adds a handler for the VenderActionEvents added by this mod >
+  <!-- Adds a handler for the UD_VenderActionEvents added by this mod >
   <object Name="PhysicalObject" Load="Merge">
     <part Name="UD_VendorActionHandler" />
   </object-->
