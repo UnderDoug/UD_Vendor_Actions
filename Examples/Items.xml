@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+
+  <!--object Name="Our_TradePerformance_Display" Inherits="UD_TradeUI_DisplayItem">
+    <part Name="Physics" Category="A+++ VIP Member Status" />
+    <part Name="Render" DisplayName="Loyalty Card" TileColor="&amp;M" DetailColor="W" Tile="Items/sw_credit_wedge.bmp" />
+    <part Name="Description" Short="There's no higher virtue than fealty, except for savings savings savings!" />
+    <part Name="Our_TradePerformance_DisplayPart" />
+  </object-->
+
+</objects>

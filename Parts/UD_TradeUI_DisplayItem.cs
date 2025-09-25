@@ -1,4 +1,5 @@
 ﻿using System;
+using UD_Modding_Toolbox;
 using UD_Vendor_Actions;
 
 namespace XRL.World.Parts
@@ -12,17 +13,16 @@ namespace XRL.World.Parts
     [Serializable]
     public class UD_TradeUI_DisplayItem : IScribedPart, IModEventHandler<UD_EndTradeEvent>
     {
-        public UD_TradeUI_DisplayItem()
+        public bool CeaseExistence(MinEvent FromEvent = null)
         {
-        }
-
-        public bool CeaseExistence()
-        {
-            if (GameObject.Validate(ParentObject))
+            string label = $"{nameof(CeaseExistence)}({FromEvent?.GetType()?.Name ?? nameof(TurnTick)})";
+            if (ParentObject != null)
             {
+                Debug.CheckYeh(4, label, ParentObject.DebugName, Indent: Debug.LastIndent);
                 ParentObject.Obliterate();
                 return true;
             }
+            Debug.CheckNah(2, label, ParentObject?.DebugName ?? Const.NULL, Indent: Debug.LastIndent);
             return false;
         }
         public override bool WantTurnTick()
@@ -40,14 +40,11 @@ namespace XRL.World.Parts
         public override bool WantEvent(int ID, int Cascade)
         {
             return base.WantEvent(ID, Cascade)
-                || ID == UD_EndTradeEvent.ID;
+                || ID == EnterCellEvent.ID;
         }
         public virtual bool HandleEvent(UD_EndTradeEvent E)
         {
-            if (CeaseExistence())
-            {
-                return false;
-            }
+            CeaseExistence(E);
             return base.HandleEvent(E);
         }
     }
