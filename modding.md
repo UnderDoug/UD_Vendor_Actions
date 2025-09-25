@@ -252,12 +252,12 @@ namespace XRL.World.Parts
 
                 // We're getting the bonus from the player's faction rep.
                 double factionPerformance = 0;
-                string factionRepMessage = "{{K|\u2022}} {{W|Faction}} rep: "; // \u2022 is •
+                string factionRepMessage = "{{K|\u2022}} {{W|Faction}} rep: "; // \u2022 is Â•
                 Faction vendorFaction = Factions.GetIfExists(vendor.GetPrimaryFaction());
 		        if (vendorFaction != null)
 		        {
                     factionPerformance = The.Game.PlayerReputation.GetTradePerformance(vendorFaction);
-                    factionRepMessage = "{{K|\u2022}} Rep with {{W|" + vendorFaction.DisplayName + "}}: "; // \u2022 is •
+                    factionRepMessage = "{{K|\u2022}} Rep with {{W|" + vendorFaction.DisplayName + "}}: "; // \u2022 is Â•
                 }
                 factionPerformance = Math.Round(factionPerformance * 0.07 * 100, 0);
                 factionRepMessage += factionPerformance ;
@@ -308,7 +308,7 @@ There are furniture items that are containers but which are also animatable, so 
 
 Below is a part that will always be attached to traders and will create a loyalty card when trade starts:
 
-[`Our_VendorLoyoaltyCard.cs`](Examples/Our_VendorLoyoaltyCard.cs)
+[`Our_VendorLoyaltyCard.cs`](Examples/Our_VendorLoyaltyCard.cs)
 ```cs
 using System;
 using UD_Vendor_Actions;
