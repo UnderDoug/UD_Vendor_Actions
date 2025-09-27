@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using XRL.UI;
 using static XRL.World.Parts.Skill.Tinkering;
 using UD_Vendor_Actions;
@@ -78,4 +77,3 @@ namespace XRL.World.Parts
         }
     }
 }
-*/

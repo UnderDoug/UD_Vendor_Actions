@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using UD_Vendor_Actions;
 
 namespace XRL.World.Parts
@@ -32,4 +31,3 @@ namespace XRL.World.Parts
         }
     }
 }
-*/

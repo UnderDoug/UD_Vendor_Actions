@@ -1,6 +1,6 @@
 {
     "id": "UD_Vendor_Actions",
-    "title": "{{C|Vendor}} {{G|Action}} Events",
+    "title": "{{C|Vendor}} {{G|Action}} Events (library)",
     "description": "Adds a small family of events similar to those for InventoryActions but centered around vendors.",
     "version": "0.0.3",
     "author": "{{K-g-G-Y-G-g-K alternation|UnderDoug}}",
@@ -9,5 +9,14 @@
     "LoadAfter": "UD_Modding_Toolbox",
     "Dependencies": {
         "UD_Modding_Toolbox": ">=0.0.2"
-    }
+    },
+    "Directories": [
+        {
+            "Paths": [ "/Common/", "/Textures/" ]
+        },
+        {
+            "Path": "/Examples/",
+            "Option": "Option_UD_Vendor_Actions_DebugEnableExampleFiles == Yes"
+        }
+    ]
 }

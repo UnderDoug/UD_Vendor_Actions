@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<options>
+
+  <!-- 
+  Debug Options
+  -->
+  <option
+        ID="Option_UD_Vendor_Actions_DebugEnableExampleFiles"
+        DisplayText="{{C|Vendor}} {{G|Action}} Events: Enable the example files from the modding guide (modding.md) ({{r|restart}})"
+        Category="Debug"
+        Type="Checkbox"
+        Default="No"
+        Restart="true" >
+    <helptext>
+      When enabled, the example files discussed in the guide made available for this mod library (found in modding.md) will be compiled with the rest of the mod when the game is loaded, allowing a prospective modder to immediately see their effects.
+      
+      It is not recommended to actually play with these files active as their implementation is largely a gag designed to be approachable and not as feature-complete components.
+      
+      Disabling this setting after having loaded a save with it enabled will probably result in the game complaining about serialization errors when you load up the save, but shouldn't have an appreciable effect on the integrity of your save after the initial spat.
+
+      The default is {{w|Disabled}}.
+    </helptext>
+  </option>
+  
+</options>

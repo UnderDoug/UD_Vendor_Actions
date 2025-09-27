@@ -1,5 +1,4 @@
-﻿/*
-using System;
+﻿using System;
 using Qud.UI;
 
 namespace XRL.World.Parts
@@ -101,4 +100,3 @@ namespace XRL.World.Parts
         }
     }
 }
-*/

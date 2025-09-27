@@ -40,7 +40,7 @@ namespace XRL.World.Parts
         public override bool WantEvent(int ID, int Cascade)
         {
             return base.WantEvent(ID, Cascade)
-                || ID == EnterCellEvent.ID;
+                || ID == UD_EndTradeEvent.ID;
         }
         public virtual bool HandleEvent(UD_EndTradeEvent E)
         {
