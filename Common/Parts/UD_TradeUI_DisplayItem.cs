@@ -15,14 +15,15 @@ namespace XRL.World.Parts
     {
         public bool CeaseExistence(MinEvent FromEvent = null)
         {
+            bool doDebug = false;
             string label = $"{nameof(CeaseExistence)}({FromEvent?.GetType()?.Name ?? nameof(TurnTick)})";
             if (ParentObject != null)
             {
-                Debug.CheckYeh(4, label, ParentObject.DebugName, Indent: Debug.LastIndent);
+                Debug.CheckYeh(4, label, ParentObject?.ShortDisplayNameSingleStripped ?? Const.NULL, Indent: 0, Toggle: doDebug);
                 ParentObject.Obliterate();
                 return true;
             }
-            Debug.CheckNah(2, label, ParentObject?.DebugName ?? Const.NULL, Indent: Debug.LastIndent);
+            Debug.CheckNah(4, label, ParentObject?.ShortDisplayNameSingleStripped ?? Const.NULL, Indent: 0, Toggle: doDebug);
             return false;
         }
         public override bool WantTurnTick()
