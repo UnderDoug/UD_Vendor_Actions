@@ -189,7 +189,12 @@ namespace UD_Vendor_Actions
         /// <param name="MouseClick">Currently unimplemented. Passed true if the TradeLine showing the menu was clicked.</param>
         /// <returns>The selected <see cref="UD_VendorAction"/> if one was picked;<br/>
         /// <see langword="null"/> otherwise.</returns>
-        public static UD_VendorAction ShowVendorActionMenu(Dictionary<string, UD_VendorAction> ActionTable, GameObject Item = null, string Intro = null, IComparer<UD_VendorAction> Comparer = null, bool MouseClick = false)
+        public static UD_VendorAction ShowVendorActionMenu(
+            Dictionary<string, UD_VendorAction> ActionTable, 
+            GameObject Item = null, 
+            string Intro = null, 
+            IComparer<UD_VendorAction> Comparer = null, 
+            bool MouseClick = false)
         {
             List<UD_VendorAction> actionsList = new();
             foreach ((string _, UD_VendorAction action) in ActionTable)
@@ -201,7 +206,7 @@ namespace UD_Vendor_Actions
             Dictionary<char, UD_VendorAction> actionsByHotkey = new(16);
 
             List<UD_VendorAction> actionsWithoutHotkeys = null;
-            StringBuilder SB = null;
+            var SB = Event.NewStringBuilder();
             foreach (UD_VendorAction vendorAction in actionsList)
             {
                 if (vendorAction.Key != ' ' && !ControlManager.isKeyMapped(vendorAction.Key, new List<string> { "UINav", "Menus" }))
@@ -314,14 +319,8 @@ namespace UD_Vendor_Actions
 
         private static string ApplyHotkey(string Display, char Key, string Prefer, ref StringBuilder SB)
         {
-            if (SB == null)
-            {
-                SB = Event.NewStringBuilder();
-            }
-            else
-            {
-                SB.Clear();
-            }
+            SB ??= Event.NewStringBuilder();
+            SB.Clear();
             if (!Display.Contains("{{") && !Display.Contains("&"))
             {
                 char hotkey = char.ToLower(Key);
