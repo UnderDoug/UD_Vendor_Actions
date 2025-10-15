@@ -19,11 +19,11 @@ namespace XRL.World.Parts
             string label = $"{nameof(CeaseExistence)}({FromEvent?.GetType()?.Name ?? nameof(TurnTick)})";
             if (ParentObject != null)
             {
-                Debug.CheckYeh(4, label, ParentObject?.ShortDisplayNameSingleStripped ?? Const.NULL, Indent: 0, Toggle: doDebug);
+                Debug.CheckYeh(4, label, ParentObject?.DebugName ?? Const.NULL, Indent: 0, Toggle: doDebug);
                 ParentObject.Obliterate();
                 return true;
             }
-            Debug.CheckNah(4, label, ParentObject?.ShortDisplayNameSingleStripped ?? Const.NULL, Indent: 0, Toggle: doDebug);
+            Debug.CheckNah(4, label, ParentObject?.DebugName ?? Const.NULL, Indent: 0, Toggle: doDebug);
             return false;
         }
         public override bool WantTurnTick()

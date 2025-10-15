@@ -6,11 +6,15 @@ Well, this is the mod library for you!
 
 Code examples can (mostly) be found in this mod's `Examples` dir. They're commented out, but they'll work if uncommented (UD_Vendor_Actions v0.0.3 and UD_Modding_Toolbox v0.0.2). 
 
+## A Word on Words
+
+WIP - Needs a quick preamble about the nomenclature used by the base game and this mod library.
+
 ## Vendor Actions (Basics)
 
 A vendor action can be thought of like a service that a trader can perform on behalf of the player. They already exist in the base game, but they're relatively closed off from easy access (for now, there's a BitBucket issue requesting exposure), which is where this library comes in.
 
-Things like tinkers repairing broken items and identifyign weird artifacts for the player are obvious examples, but so is Sheba Hagadias allowing the player to read donated books, and the simple ability to "look" at an item in the trade UI.
+Things like tinkers repairing broken items and identifying weird artifacts for the player are obvious examples, but so is Sheba Hagadias allowing the player to read donated books, and the simple ability to "look" at an item in the trade UI.
 
 For this quick instructional, we'll be making an alternative to a tinker's ability to identify (examine) an object for the player.
 
