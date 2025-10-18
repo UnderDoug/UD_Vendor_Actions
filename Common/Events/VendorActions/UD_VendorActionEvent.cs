@@ -63,7 +63,18 @@ namespace UD_Vendor_Actions
         /// <param name="Second">Indicates whether this is the second time the event has been sent.</param>
         /// <returns><see langword="true"/> if <paramref name="Handler"/> successfully <see cref="GameObject.Validate(ref GameObject)"/>, <see cref="GameObject.WantEvent"/>, and <see cref="IModEventHandler{I_UD_VendorActionEvent{T}}.HandleEvent(I_UD_VendorActionEvent{T})"/> returns <see langword="true"/>;<br/>
         /// <see langword="false"/> otherwise.</returns>
-        public static bool Check(TradeLine TradeLine, GameObject Handler, GameObject Vendor, GameObject Item, GameObject Owner, string Command, out bool CloseTrade, out bool CancelSecond, int? DramsCost = null, bool Staggered = false, bool Second = false)
+        public static bool Check(
+            TradeLine TradeLine,
+            GameObject Handler,
+            GameObject Vendor,
+            GameObject Item,
+            GameObject Owner,
+            string Command,
+            out bool CloseTrade,
+            out bool CancelSecond,
+            int? DramsCost = null,
+            bool Staggered = false,
+            bool Second = false)
         {
             CloseTrade = false;
             CancelSecond = false;
