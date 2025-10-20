@@ -8,7 +8,7 @@
     "PreviewImage": "preview.png",
     "LoadAfter": "UD_Modding_Toolbox",
     "Dependencies": {
-        "UD_Modding_Toolbox": ">=0.0.2"
+        "UD_Modding_Toolbox": ">=0.1.0"
     },
     "Directories": [
         {

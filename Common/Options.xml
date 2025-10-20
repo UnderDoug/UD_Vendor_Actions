@@ -9,16 +9,39 @@
         DisplayText="{{C|Vendor}} {{G|Action}} Events: Enable the example files from the modding guide (modding.md) ({{r|restart}})"
         Category="Debug"
         Type="Checkbox"
-        Default="No"
+        Default="Yes"
         Restart="true" >
     <helptext>
       When enabled, the example files discussed in the guide made available for this mod library (found in modding.md) will be compiled with the rest of the mod when the game is loaded, allowing a prospective modder to immediately see their effects.
-      
+
       It is not recommended to actually play with these files active as their implementation is largely a gag designed to be approachable and not as feature-complete components.
-      
+
       Disabling this setting after having loaded a save with it enabled will probably result in the game complaining about serialization errors when you load up the save, but shouldn't have an appreciable effect on the integrity of your save after the initial spat.
 
-      The default is {{w|Disabled}}.
+      The default is {{W|Enabled}}.
+    </helptext>
+  </option>
+  <!-- 
+  Mod Options
+  -->
+  <option
+        ID="Option_UD_Vendor_Actions_EnableWarningsForBigJumpsInModVersion"
+        DisplayText="Enable warning popups when loading a save with a &quot;minor&quot; or &quot;major&quot; version mismatch."
+        Category="Mod: Vendor Action Events"
+        Type="Checkbox"
+        Default="Yes" >
+    <helptext>
+      Some updates are less incremental than others and when a lot of stuff has changed, it's not uncommon for things to break when migrating from a previous version to a newer one.
+
+      With this option enabled, during the process of loading a save, when this mod checks whether the mod version has changed, if there's a version mismatch where the &quot;minor&quot; or &quot;major&quot; version has increased, a warning will be issued before control is given to the player.
+
+      The warning advises that there's been a &quot;bigger than usual&quot; update to the mod, and recommends a new save, or downgrading the mod to see out the saved run in question.
+
+      In a version number, v{{R|0}}.{{W|1}}.{{G|2}}, the 0 is the &quot;{{R|major}} version&quot;, the 1 is the &quot;{{W|minor}} version&quot;, and the 2 &quot;{{G|build}} version&quot;.
+
+      This option has no effect on whether or not this mod will attempt to perform a migration.
+
+      The default is {{W|Enabled}}.
     </helptext>
   </option>
   

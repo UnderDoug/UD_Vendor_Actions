@@ -26,5 +26,8 @@ namespace UD_Vendor_Actions
 
         // Debug Settings
         [OptionFlag] public static bool DebugEnableExampleFiles;
+
+        // Checkbox settings
+        [OptionFlag] public static bool EnableWarningsForBigJumpsInModVersion;
     }
 }
