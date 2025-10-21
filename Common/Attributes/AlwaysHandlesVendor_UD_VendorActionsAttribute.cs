@@ -10,7 +10,7 @@ namespace UD_Vendor_Actions
     /// <remarks>
     /// A good example of one such part is <see cref="UD_VendorActionHandler"/>, which was designed to be attached to the base "Creature" blueprint.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class AlwaysHandlesVendor_UD_VendorActionsAttribute : Attribute
     {
     }

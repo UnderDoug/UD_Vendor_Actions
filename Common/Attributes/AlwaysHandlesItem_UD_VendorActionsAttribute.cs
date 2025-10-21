@@ -9,7 +9,7 @@ namespace UD_Vendor_Actions
     /// <remarks>
     /// There are currently no good examples, however if this part would be attached to the base "Item" blueprint then it should be decorated with this attribute.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class AlwaysHandlesItem_UD_VendorActionsAttribute : Attribute
     {
     }
