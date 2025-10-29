@@ -6,11 +6,6 @@
     <BaseIntermediateOutputPath>.dotnet\obj\</BaseIntermediateOutputPath>
     <BaseOutputPath>.dotnet\bin\</BaseOutputPath>
 	</PropertyGroup>
-	<ItemGroup>
-	  <Compile Remove="obj\**" />
-	  <EmbeddedResource Remove="obj\**" />
-	  <None Remove="obj\**" />
-	</ItemGroup>
   <ItemGroup>
     <Reference Include="UD_Modding_Toolbox.dll">
       <HintPath>..\..\..\ModAssemblies\UD_Modding_Toolbox.dll</HintPath>

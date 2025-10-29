@@ -26,6 +26,7 @@ namespace UD_Vendor_Actions
 
         // Debug Settings
         [OptionFlag] public static bool DebugEnableExampleFiles;
+        [OptionFlag] public static bool DebugDisableVendorExamineExample;
 
         // Checkbox settings
         [OptionFlag] public static bool EnableWarningsForBigJumpsInModVersion;

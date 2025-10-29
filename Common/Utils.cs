@@ -13,7 +13,9 @@ namespace UD_Vendor_Actions
         private static bool getDoDebug(string MethodName)
         {
             if (MethodName == nameof(ApplyVendorActionHandlerPartsFromAttribute))
+            { 
                 return true;
+            }
 
             return doDebug;
         }
@@ -59,7 +61,8 @@ namespace UD_Vendor_Actions
                     {
                         Debug.CheckNah(4, $"{handle_UD_VendorAction.Name} (not an {nameof(IPart)})", Indent: indent + 2, Toggle: doDebug);
                         MetricsManager.LogPotentialModError(ModManager.GetMod(handle_UD_VendorAction.Assembly),
-                            $"{handle_UD_VendorAction.GetType()} is decorated with {Attribute.Name} attribute but is not an IPart derivative.");
+                            $"{handle_UD_VendorAction.GetType()} is decorated with {Attribute.Name} attribute " +
+                            $"but is not an {nameof(IPart)} derivative.");
                     }
                 }
             }

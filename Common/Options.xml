@@ -9,7 +9,7 @@
         DisplayText="{{C|Vendor}} {{G|Action}} Events: Enable the example files from the modding guide (modding.md) ({{r|restart}})"
         Category="Debug"
         Type="Checkbox"
-        Default="Yes"
+        Default="no"
         Restart="true" >
     <helptext>
       When enabled, the example files discussed in the guide made available for this mod library (found in modding.md) will be compiled with the rest of the mod when the game is loaded, allowing a prospective modder to immediately see their effects.
@@ -18,7 +18,24 @@
 
       Disabling this setting after having loaded a save with it enabled will probably result in the game complaining about serialization errors when you load up the save, but shouldn't have an appreciable effect on the integrity of your save after the initial spat.
 
-      The default is {{W|Enabled}}.
+      The default is {{W|Disabled}}.
+    </helptext>
+  </option>
+  <option
+        ID="Option_UD_Vendor_Actions_DebugDisableVendorExamineExample"
+		    Requires="Option_UD_Vendor_Actions_DebugEnableExampleFiles==Yes"
+        DisplayText="{{C|Vendor}} {{G|Action}} Events: Disable the {{C|VendorExamine.cs}} example file from the modding guide (modding.md)"
+        Category="Debug"
+        Type="Checkbox"
+        Default="No" >
+    <helptext>
+      When enabled, the {{C|VendorExamine.cs}} example file will be rendered innert. The file will still load, but its vendor action will blocked from running. 
+      
+      This example file is especially a gag compared to the others, since it effectively prevents vendors from identifying artifacts and trinkets. This option allows playing with the loyalty card from the example, without also making identification impossible.
+
+      Although enabling the example files overall requires a restart, this option specifically does not, and can be toggled at will without issue.
+
+      The default is {{W|Disabled}}.
     </helptext>
   </option>
   <!-- 

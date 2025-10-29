@@ -55,12 +55,14 @@ namespace XRL.World.Parts
                     .Append(GameText.VariableReplace(membershipMessage, vendor, player));
 
                 // We're getting the bonus from the player's faction rep.
+                double baseFactionPerformance = 0;
                 double factionPerformance = 0;
                 string factionRepMessage = "{{K|\u2022}} {{W|Faction}} rep: "; // \u2022 is •
                 Faction vendorFaction = Factions.GetIfExists(vendor.GetPrimaryFaction());
 		        if (vendorFaction != null)
 		        {
-                    factionPerformance = The.Game.PlayerReputation.GetTradePerformance(vendorFaction);
+                    baseFactionPerformance = The.Game.PlayerReputation.GetTradePerformance(vendorFaction);
+                    factionPerformance = baseFactionPerformance;
                     factionRepMessage = "{{K|\u2022}} Rep with {{W|" + vendorFaction.DisplayName + "}}: "; // \u2022 is •
                 }
                 factionPerformance = Math.Round(factionPerformance * 0.07 * 100, 0);
@@ -74,7 +76,7 @@ namespace XRL.World.Parts
 		            GetTradePerformanceEvent e = GetTradePerformanceEvent.FromPool(player, vendor, (int)egoPerformance, 0, 1);
 		            if (player.HandleEvent(e))
 		            {
-                        egoPerformance += e.LinearAdjustment - factionPerformance;
+                        egoPerformance += e.LinearAdjustment - baseFactionPerformance;
                     }
                 }
                 egoPerformance = Math.Round(egoPerformance * 0.07 * 100, 0);

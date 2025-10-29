@@ -2,6 +2,7 @@
 using XRL.UI;
 using static XRL.World.Parts.Skill.Tinkering;
 using UD_Vendor_Actions;
+using Options = UD_Vendor_Actions.Options;
 
 namespace XRL.World.Parts
 {
@@ -27,7 +28,8 @@ namespace XRL.World.Parts
         // virtual isn't required, but lets a hypothetical derived type override it.
         public virtual bool HandleEvent(UD_GetVendorActionsEvent E)
         {
-            if (E.Vendor != null && ParentObject == E.Vendor)
+            if (E.Vendor != null && ParentObject == E.Vendor
+                && !Options.DebugDisableVendorExamineExample) // Allows blocking this from running, since it overrides the action
             {
                 // Check how competent the vendor is at IDing items, and if the player doesn't understand the item
                 if (GetIdentifyLevel(E.Vendor) > 0 && !E.Item.Understood())
@@ -49,7 +51,8 @@ namespace XRL.World.Parts
         // virtual isn't required, but lets a hypothetical derived type override it.
         public virtual bool HandleEvent(UD_VendorActionEvent E)
         {
-            if (E.Vendor != null && ParentObject == E.Vendor)
+            if (E.Vendor != null && ParentObject == E.Vendor
+                && !Options.DebugDisableVendorExamineExample) // Allows blocking this from running, since it overrides the action
             {
                 // Check if this event is for the action we want to perform.
                 if (E.Command == COMMAND_IDENTIFY)
