@@ -29,7 +29,7 @@ namespace XRL.World.Parts
                 // Do code...
                 // Your Bep Loyalty Card - Rating: 35
                 
-                E.AddAdjective(GameText.VariableReplace("=object.T's= {{Y|=subject.name=}}", vendor, player));
+                E.AddAdjective(GameText.VariableReplace("=object.T's= {{Y|=subject.refname=}}", vendor, player));
 
                 if (E.Context == nameof(TradeLine)) // This context is provided by a patch to TradeLine in UD_Modding_Toolbox.
                 {
@@ -50,7 +50,7 @@ namespace XRL.World.Parts
                 // This is a lot of work, ultimately, but hopefully not too hard to follow.
                 double performance = GetTradePerformanceEvent.GetFor(The.Player, vendor);
                 string membershipRating = Math.Round(performance * 100, 0).ToString().Color("W");
-                string membershipMessage = "=object.Name's= {{Y|A+}}{{W|+}}{{M|+}} {{Y|VIP}} {{C|Member Status}} with =subject.Name= is " + membershipRating + "!";
+                string membershipMessage = "=object.Name's= {{Y|A+}}{{W|+}}{{M|+}} {{Y|VIP}} {{C|Member Status}} with =subject.refname= is " + membershipRating + "!";
                 E.Postfix.AppendLine()
                     .Append(GameText.VariableReplace(membershipMessage, vendor, player));
 
