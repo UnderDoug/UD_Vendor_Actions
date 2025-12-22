@@ -54,7 +54,8 @@ namespace UD_Vendor_Actions
         }
         public void Send(GameObject Handler)
         {
-            if ((bool)Handler?.WantEvent(ID, CascadeLevel))
+            if (Handler != null
+                && Handler.WantEvent(ID, CascadeLevel))
             {
                 Handler.HandleEvent(Instance);
             }
