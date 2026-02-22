@@ -117,13 +117,13 @@ namespace UD_Vendor_Actions
         public bool Staggered;
 
         /// <summary>If <see cref="Staggered"/>, indicates that the trade window should be closed before <see cref="Process"/> is called the second time.</summary>
-        /// <remarks>It is recommended (by LibrarianMage/Books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="MinEvent"/> are being resolved.<br/>
+        /// <remarks>It is recommended (by LibrarianMage/books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="MinEvent"/> are being resolved.<br/>
         /// It's my recommendation that this, or <see cref="CloseTradeAfterProcessing"/>, be the only means by which the trade UI is manipulated when dealing with vendor actions.</remarks>
         public bool CloseTradeBeforeProcessingSecond;
 
         /// <summary>Indicates that the trade window should be closed at the end of a given action being resolved.</summary>
         /// <remarks>If the chosen action has this field set to <see langword="true"/>, the trade window will be closed once the action is processed, whether successfully handled or not.<br/><br/>
-        /// It is recommended (by LibrarianMage/Books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="MinEvent"/> are being resolved.<br/>
+        /// It is recommended (by LibrarianMage/books, whose modding advice is invaluable) that the trade UI not be manipulated while any <see cref="MinEvent"/> are being resolved.<br/>
         /// It's my recommendation that this, or <see cref="CloseTradeAfterProcessing"/>, be the only means by which the trade UI is manipulated when dealing with vendor actions.</remarks>
         public bool CloseTradeAfterProcessing;
 
