@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<PackageId>UD_Vendor_Actions</PackageId>
+    <AssemblyName>UD_Vendor_Actions</AssemblyName>
 		<Authors>UnderDoug</Authors>
 		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <BaseIntermediateOutputPath>.dotnet\obj\</BaseIntermediateOutputPath>
