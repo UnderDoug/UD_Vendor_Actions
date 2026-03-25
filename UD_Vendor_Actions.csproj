@@ -6,10 +6,13 @@
     <BaseIntermediateOutputPath>.dotnet\obj\</BaseIntermediateOutputPath>
     <BaseOutputPath>.dotnet\bin\</BaseOutputPath>
 	</PropertyGroup>
-  <ItemGroup>
-    <Reference Include="UD_Modding_Toolbox.dll">
-      <HintPath>..\..\..\ModAssemblies\UD_Modding_Toolbox.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="obj\**" />
+	  <EmbeddedResource Remove="obj\**" />
+	  <None Remove="obj\**" />
+	</ItemGroup>
   <Import Project="../Mods.csproj" />
+  <ItemGroup>
+	  <ProjectReference Include="..\UD_Modding_Toolbox\UD_Modding_Toolbox.csproj" />
+	</ItemGroup>
 </Project>
